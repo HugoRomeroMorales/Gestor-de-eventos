@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>Resources/Icons/Azul.png</file>
+    <file>Resources/Icons/Naranja.png</file>
+    <file>Resources/Icons/Rojo.png</file>
+    <file>Resources/Icons/Verde.png</file>
+  </qresource>
+</RCC>
