@@ -14,7 +14,32 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout"/>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="2">
+     <widget class="QColumnView" name="columnView"/>
+    </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="text">
+       <string>Añadir Invitado</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Eliminar invitado</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Generar Mesas</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -25,9 +50,23 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuInvitados">
+    <property name="title">
+     <string>Invitados</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuMesas">
+    <property name="title">
+     <string>Mesas</string>
+    </property>
+   </widget>
+   <addaction name="menuInvitados"/>
+   <addaction name="menuMesas"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="ReourcesGE.qrc"/>
+ </resources>
  <connections/>
 </ui>
