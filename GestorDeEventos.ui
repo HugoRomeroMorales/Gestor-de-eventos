@@ -32,7 +32,17 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="2">
+    <item row="0" column="0">
+     <widget class="QTableView" name="tableView"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="pushButton_4">
+      <property name="text">
+       <string>Subir lista de invitados</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
      <widget class="QPushButton" name="pushButton">
       <property name="text">
        <string>Generar Mesas</string>
@@ -60,6 +70,12 @@
      <string>Mesas</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuEventos">
+    <property name="title">
+     <string>Eventos</string>
+    </property>
+   </widget>
+   <addaction name="menuEventos"/>
    <addaction name="menuInvitados"/>
    <addaction name="menuMesas"/>
   </widget>
