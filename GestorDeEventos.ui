@@ -15,25 +15,12 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="2">
-     <widget class="QColumnView" name="columnView"/>
-    </item>
-    <item row="3" column="2">
+    <item row="3" column="1">
      <widget class="QPushButton" name="pushButton_3">
       <property name="text">
        <string>Añadir Invitado</string>
       </property>
      </widget>
-    </item>
-    <item row="4" column="2">
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="text">
-       <string>Eliminar invitado</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QTableView" name="tableView"/>
     </item>
     <item row="3" column="0">
      <widget class="QPushButton" name="pushButton_4">
@@ -49,8 +36,22 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="1">
+     <widget class="QListView" name="listView"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QTableView" name="tableView"/>
+    </item>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Eliminar invitado</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -65,21 +66,8 @@
      <string>Invitados</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menuMesas">
-    <property name="title">
-     <string>Mesas</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuEventos">
-    <property name="title">
-     <string>Eventos</string>
-    </property>
-   </widget>
-   <addaction name="menuEventos"/>
    <addaction name="menuInvitados"/>
-   <addaction name="menuMesas"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
   <include location="ReourcesGE.qrc"/>
