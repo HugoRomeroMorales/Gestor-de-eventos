@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>926</width>
+    <height>784</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -107,22 +107,6 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuInvitados">
-    <property name="title">
-     <string>Invitados</string>
-    </property>
-   </widget>
-   <addaction name="menuInvitados"/>
-  </widget>
  </widget>
  <resources>
   <include location="ReourcesGE.qrc"/>
