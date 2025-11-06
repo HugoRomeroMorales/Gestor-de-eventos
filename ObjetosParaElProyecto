@@ -1,7 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
 import csv
-
 
 @dataclass
 class Invitado:
@@ -9,33 +7,85 @@ class Invitado:
     nombre: str
     apellido: str
     preferencias: List[str] = field(default_factory=list)
-    
+
 @dataclass
-class mesa:
+class Mesa:
     mesa_id: int
     numAsientos: int
     nombMesa: Optional[str] = None
-    invitados = List[Invitado] = field(default_factory=list)
-    invitadosNoAsignados = List[Invitado] = field(default_factory=list)
-    
-def escribirCSV(
-    mesas: Dict[str, mesa],
-    invitados_no_asignados: List[Invitado],
-    ruta_csv: str = "mesas_invitados.csv",
-    delimitador: str = ",",
-):
-    with open(ruta_csv,"w", "", "utf-8-sig") as f:
-        writer = csv.writer(f, delimiter = delimitador, quoting = csv.QUOTEMINIMAL)
-        writer.writerow(["mesa_id", "mesa_nombre", "nombre", "apellido", "rol", "preferencias"])
-        
-        for Invitado in invitados_no_asignados:
-            prefs = "|".join(Invitado.preferencias)
-            writer.writerow(["NO_ASIGNADOS", "Invitados no asignados", Invitado.nombre, Invitado.apellido, Invitado.rol, prefs])
-    
-        for mesa_id, mesa in mesa.item():
-            mesa_nombre = mesa.nombre if mesa.nombre else mesa_id
-            for Invitado in mesa.invitados:
-                prefs = "|".join(Invitado.preferencias)
-                writer.writerow([mesa_id, mesa_nombre, Invitado.nombre, Invitado.apellido, Invitado.rol, prefs])
+    invitados: List[Invitado] = field(default_factory=list)
 
-    
+@dataclass
+class Evento:
+    nombre: str
+    fecha: str
+    ubicacion: str
+    mesas: List[Mesa] = field(default_factory=list)
+
+def importar_invitados_csv(ruta_csv: str, delimitador: str = ";") -> List[Invitado]:
+    """
+    Lee un CSV con columnas: nombre, apellido, rol, preferencias
+    y devuelve una lista de objetos Invitado.
+    - 'preferencias' puede venir como "vegano|sin_gluten"
+    """
+    invitados: List[Invitado] = []
+
+    with open(ruta_csv, "r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f, delimiter=delimitador)
+        for fila in reader:
+            # leer columnas y limpiar espacios
+            nombre = fila.get("nombre", "").strip()
+            apellido = fila.get("apellido", "").strip()
+            rol = fila.get("rol", "").strip()
+            prefs_raw = fila.get("preferencias", "").strip()
+
+            # convertir "pref1|pref2" -> ["pref1", "pref2"]
+            preferencias = [p.strip() for p in prefs_raw.split("|") if p.strip()]
+
+            invitado = Invitado(
+                rol=rol,
+                nombre=nombre,
+                apellido=apellido,
+                preferencias=preferencias
+            )
+            invitados.append(invitado)
+
+    return invitados
+
+def exportar_evento_csv(evento: Evento, ruta="evento.csv", delim=";"):
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["nombre", "fecha", "ubicacion"])
+        w.writerow([evento.nombre, evento.fecha, evento.ubicacion])
+
+def exportar_mesas_csv(evento: Evento, ruta="mesas.csv", delim=";"):
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["mesa_id", "mesa_nombre", "num_asientos"])
+        for m in evento.mesas:
+            etiqueta = m.nombMesa if m.nombMesa else f"Mesa{m.mesa_id}"
+            w.writerow([m.mesa_id, etiqueta, m.numAsientos])
+
+def exportar_invitados_no_asignados_csv(no_asignados: List[Invitado], ruta="invitados_no_asignados.csv", delim=";"):
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["nombre", "apellido", "rol", "preferencias"])
+        for inv in no_asignados:
+            w.writerow([inv.nombre, inv.apellido, inv.rol, "|".join(inv.preferencias)])
+
+def exportar_invitados_csv(evento: Evento, ruta="invitados.csv", delim=";"):
+    """Invitados asignados a una mesa (una fila por invitado)."""
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["mesa_id", "mesa_nombre", "nombre", "apellido", "rol", "preferencias"])
+        for m in evento.mesas:
+            etiqueta = m.nombMesa if m.nombMesa else f"Mesa{m.mesa_id}"
+            for inv in m.invitados:
+                w.writerow([m.mesa_id, etiqueta, inv.nombre, inv.apellido, inv.rol, "|".join(inv.preferencias)])
+
+def exportar_todo_csv(evento: Evento, no_asignados: List[Invitado], base="evento", delim=";"):
+    exportar_evento_csv(evento, f"{base}_evento.csv", delim)
+    exportar_mesas_csv(evento, f"{base}_mesas.csv", delim)
+    exportar_invitados_no_asignados_csv(no_asignados, f"{base}_invitados_no_asignados.csv", delim)
+    exportar_invitados_csv(evento, f"{base}_invitados.csv", delim)
+
