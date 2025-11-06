@@ -169,7 +169,7 @@ class Demo(QtWidgets.QMainWindow):
 
         radial = RadialMenu(
             actions=actions,
-            radius=85,           # distancia de los botones
+            radius=200,           # distancia de los botones
             start_angle_deg=90,  # empieza ABAJO
             arc_span_deg=90,     # hasta IZQUIERDA
             edge_margin=16

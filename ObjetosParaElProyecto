@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
+import csv
+
+
 @dataclass
-class persona:
+class Invitado:
     rol: str
     nombre: str
     apellido: str
@@ -9,14 +12,30 @@ class persona:
     
 @dataclass
 class mesa:
-    numMesa: int
+    mesa_id: int
     numAsientos: int
     nombMesa: Optional[str] = None
-    invitados = List[persona] = field(default_factory=list)
-    invitadosNoAsignados = List[persona] = field(default_factory=list)
+    invitados = List[Invitado] = field(default_factory=list)
+    invitadosNoAsignados = List[Invitado] = field(default_factory=list)
     
+def escribirCSV(
+    mesas: Dict[str, mesa],
+    invitados_no_asignados: List[Invitado],
+    ruta_csv: str = "mesas_invitados.csv",
+    delimitador: str = ",",
+):
+    with open(ruta_csv,"w", "", "utf-8-sig") as f:
+        writer = csv.writer(f, delimiter = delimitador, quoting = csv.QUOTEMINIMAL)
+        writer.writerow(["mesa_id", "mesa_nombre", "nombre", "apellido", "rol", "preferencias"])
+        
+        for Invitado in invitados_no_asignados:
+            prefs = "|".join(Invitado.preferencias)
+            writer.writerow(["NO_ASIGNADOS", "Invitados no asignados", Invitado.nombre, Invitado.apellido, Invitado.rol, prefs])
     
-    
-
+        for mesa_id, mesa in mesa.item():
+            mesa_nombre = mesa.nombre if mesa.nombre else mesa_id
+            for Invitado in mesa.invitados:
+                prefs = "|".join(Invitado.preferencias)
+                writer.writerow([mesa_id, mesa_nombre, Invitado.nombre, Invitado.apellido, Invitado.rol, prefs])
 
     
