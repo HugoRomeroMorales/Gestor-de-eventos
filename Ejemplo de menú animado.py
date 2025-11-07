@@ -18,6 +18,7 @@ class RadialMenu(QtWidgets.QWidget):
         self.opened = False
         self.anim_duration = 220
 
+
         # Botón central (llave inglesa)
         self.center_btn = QtWidgets.QToolButton(self)
         self.center_btn.setText("🔧")
