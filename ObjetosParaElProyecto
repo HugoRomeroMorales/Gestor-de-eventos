@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict
 import csv
 
+
 @dataclass
 class Invitado:
     rol: str
@@ -75,7 +76,7 @@ def exportar_invitados_no_asignados_csv(no_asignados: List[Invitado], ruta="invi
             w.writerow([inv.nombre, inv.apellido, inv.rol, "|".join(inv.preferencias)])
 
 def exportar_invitados_csv(evento: Evento, ruta="invitados.csv", delim=";"):
-    """Invitados asignados a una mesa (una fila por invitado)."""
+
     with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f, delimiter=delim)
         w.writerow(["mesa_id", "mesa_nombre", "nombre", "apellido", "rol", "preferencias"])
@@ -105,7 +106,6 @@ def render_mesa(ui, invitados, capacidad, mostrar_huecos=True):
     arena = ui.arena
     clear_arena(arena)
 
-    # Actualiza el texto de asientos del centro
     if hasattr(ui, "lblAsientos"):
         ui.lblAsientos.setText(f"Asientos: {len(invitados)}/{capacidad}")
 
@@ -113,7 +113,7 @@ def render_mesa(ui, invitados, capacidad, mostrar_huecos=True):
     cx, cy = arena_w // 2, arena_h // 2
 
     r = min(arena_w, arena_h) // 2 - MARGIN - ICON_SIZE // 2
-    if r < 40:  # seguridad por si el widget es pequeño
+    if r < 40:  
         r = 40
 
     if mostrar_huecos:
