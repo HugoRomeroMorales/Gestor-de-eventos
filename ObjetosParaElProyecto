@@ -90,3 +90,68 @@ def exportar_todo_csv(evento: Evento, no_asignados: List[Invitado], base="evento
     exportar_invitados_no_asignados_csv(no_asignados, f"{base}_invitados_no_asignados.csv", delim)
     exportar_invitados_csv(evento, f"{base}_invitados.csv", delim)
 
+
+import math
+from PyQt5 import QtWidgets, QtGui, QtCore
+
+ICON_SIZE = 56
+MARGIN = 24
+
+def clear_arena(arena: QtWidgets.QWidget):
+    for w in arena.findChildren(QtWidgets.QWidget):
+        w.deleteLater()
+
+def render_mesa(ui, invitados, capacidad, mostrar_huecos=True):
+    arena = ui.arena
+    clear_arena(arena)
+
+    # Actualiza el texto de asientos del centro
+    if hasattr(ui, "lblAsientos"):
+        ui.lblAsientos.setText(f"Asientos: {len(invitados)}/{capacidad}")
+
+    arena_w, arena_h = arena.width(), arena.height()
+    cx, cy = arena_w // 2, arena_h // 2
+
+    r = min(arena_w, arena_h) // 2 - MARGIN - ICON_SIZE // 2
+    if r < 40:  # seguridad por si el widget es pequeño
+        r = 40
+
+    if mostrar_huecos:
+        n_slots = max(capacidad, 1)
+    else:
+        n_slots = max(len(invitados), 1)
+
+    start = -math.pi / 2
+    step = 2 * math.pi / n_slots
+
+    data = list(invitados)
+    if mostrar_huecos and len(data) < capacidad:
+        data = data + [{"nombre": "", "icon": "Resources/Icons/Gris.png"}] * (capacidad - len(data))
+
+    for i in range(n_slots):
+        info = data[i] if i < len(data) else None
+
+        ang = start + i * step
+        x = cx + r * math.cos(ang)
+        y = cy + r * math.sin(ang)
+
+        icon = QtWidgets.QLabel(arena)
+        icon.setMinimumSize(ICON_SIZE, ICON_SIZE)
+        icon.setMaximumSize(ICON_SIZE, ICON_SIZE)
+        icon.setScaledContents(True)
+        icon.setAlignment(QtCore.Qt.AlignCenter)
+        icon.setStyleSheet("QLabel{background:transparent;}")
+        if info and info.get("icon"):
+            icon.setPixmap(QtGui.QPixmap(info["icon"]))
+        icon.move(int(x - ICON_SIZE/2), int(y - ICON_SIZE/2))
+        icon.show()
+
+        nombre = (info.get("nombre") or "").strip() if info else ""
+        if nombre:
+            lbl = QtWidgets.QLabel(arena)
+            lbl.setText(nombre)
+            lbl.adjustSize()
+            lbl.setAlignment(QtCore.Qt.AlignCenter)
+            lbl.move(int(x - lbl.width()/2), int(y + ICON_SIZE/2 + 4))
+            lbl.show()
+
