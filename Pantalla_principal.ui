@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>1200</width><height>720</height></rect>
+  </property>
+  <property name="windowTitle">
+   <string>Gestión de Eventos</string>
+  </property>
+
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="layoutRoot">
+    <property name="spacing"><number>20</number></property>
+    <property name="leftMargin"><number>60</number></property>
+    <property name="topMargin"><number>40</number></property>
+    <property name="rightMargin"><number>60</number></property>
+    <property name="bottomMargin"><number>30</number></property>
+
+    <item>
+     <widget class="QWidget" name="card">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QVBoxLayout" name="cardLayout">
+       <property name="spacing"><number>18</number></property>
+       <property name="leftMargin"><number>30</number></property>
+       <property name="topMargin"><number>24</number></property>
+       <property name="rightMargin"><number>30</number></property>
+       <property name="bottomMargin"><number>24</number></property>
+
+       <item>
+        <layout class="QHBoxLayout" name="headerLayout">
+         <item>
+          <widget class="QLabel" name="lblTitulo">
+           <property name="text"><string>LISTA DE EVENTOS</string></property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="alignment"><set>Qt::AlignVCenter|Qt::AlignLeft</set></property>
+           <property name="font">
+            <font><pointsize>16</pointsize><bold>true</bold></font>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnAnadir">
+           <property name="text"><string>+ Añadir</string></property>
+           <property name="minimumWidth"><number>110</number></property>
+           <property name="minimumHeight"><number>32</number></property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnEditar">
+           <property name="text"><string>✎ Editar</string></property>
+           <property name="minimumWidth"><number>110</number></property>
+           <property name="minimumHeight"><number>32</number></property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnEliminar">
+           <property name="text"><string>🗑 Eliminar</string></property>
+           <property name="minimumWidth"><number>110</number></property>
+           <property name="minimumHeight"><number>32</number></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+
+       <item>
+        <widget class="QListWidget" name="lstEventos">
+         <property name="alternatingRowColors"><bool>false</bool></property>
+         <property name="uniformItemSizes"><bool>false</bool></property>
+         <property name="selectionMode"><enum>QAbstractItemView::SingleSelection</enum></property>
+         <property name="selectionBehavior"><enum>QAbstractItemView::SelectRows</enum></property>
+         <property name="wordWrap"><bool>true</bool></property>
+         <property name="spacing"><number>12</number></property>
+        </widget>
+       </item>
+
+      </layout>
+     </widget>
+    </item>
+
+    <item>
+     <layout class="QHBoxLayout" name="searchLayout">
+      <item>
+       <spacer name="spacerLeft">
+        <property name="orientation"><enum>Qt::Horizontal</enum></property>
+        <property name="sizeType"><enum>QSizePolicy::Expanding</enum></property>
+        <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="txtBuscar">
+        <property name="minimumWidth"><number>800</number></property>
+        <property name="placeholderText"><string>Escribe aquí el evento que quieras buscar</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="btnBuscar">
+        <property name="text"><string>🔍</string></property>
+        <property name="minimumWidth"><number>40</number></property>
+        <property name="minimumHeight"><number>36</number></property>
+        <property name="toolButtonStyle"><enum>Qt::ToolButtonTextOnly</enum></property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="spacerRight">
+        <property name="orientation"><enum>Qt::Horizontal</enum></property>
+        <property name="sizeType"><enum>QSizePolicy::Expanding</enum></property>
+        <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+
+   </layout>
+  </widget>
+
+  <widget class="QMenuBar" name="menubar"/>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
