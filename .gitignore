@@ -14,3 +14,4 @@ __pycache__/
 .vscode/
 venv/Lib/site-packages/_distutils_hack/__init__.py
 /venv
+/venv/Lib
