@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Vistas/Emergente_añadir_evento.ui'
+# Form implementation generated from reading ui file 'Vistas/emergente_anadir_evento.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -147,3 +147,13 @@ class Ui_EmergenteAnadirEvento(object):
         self.dateFecha.setDisplayFormat(_translate("EmergenteAnadirEvento", "dd/MM/yyyy"))
         self.timeHora.setDisplayFormat(_translate("EmergenteAnadirEvento", "HH:mm"))
         self.btnCancelar.setText(_translate("EmergenteAnadirEvento", "✖ Cancelar"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    EmergenteAnadirEvento = QtWidgets.QMainWindow()
+    ui = Ui_EmergenteAnadirEvento()
+    ui.setupUi(EmergenteAnadirEvento)
+    EmergenteAnadirEvento.show()
+    sys.exit(app.exec_())
