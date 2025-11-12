@@ -1,18 +1,14 @@
-# Entorno virtual
-venv/
-.venv/
-env/
+# Entornos virtuales (en cualquier subcarpeta)
+**/venv/
+**/.venv/
+**/env/
 *.env
 
-# Caché de Python
+# Cachés Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Archivos de IDE (como VS Code)
+# VS Code
 .vscode/
-venv/Lib/site-packages/_distutils_hack/__init__.py
-/venv
-/venv/Lib
-/venv/Lib/site-packages/_distutils_hack
