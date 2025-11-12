@@ -1,603 +1,603 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>MainWindow</class>
-    <widget class="QMainWindow" name="MainWindow">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>1026</width>
-                <height>710</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>Gestor de Eventos</string>
-        </property>
-        <widget class="QWidget" name="centralwidget">
-            <property name="styleSheet">
-                <string notr="true">QWidget#centralwidget{background:#9cd3ff;}</string>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1026</width>
+    <height>710</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Gestor de Eventos</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget#centralwidget{background:#9cd3ff;}</string>
+   </property>
+   <layout class="QVBoxLayout" name="rootV">
+    <item>
+     <layout class="QHBoxLayout" name="rowMain">
+      <item>
+       <layout class="QVBoxLayout" name="leftPanel">
+        <item>
+         <layout class="QHBoxLayout" name="leftTopBar">
+          <item>
+           <widget class="QToolButton" name="btnBack">
+            <property name="toolTip">
+             <string>Volver</string>
             </property>
-            <layout class="QVBoxLayout" name="rootV">
+            <property name="styleSheet">
+             <string notr="true">QToolButton{font:16pt;background:transparent;border:none;}</string>
+            </property>
+            <property name="text">
+             <string>&lt;-</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Ayuda</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="gbMesas">
+          <property name="styleSheet">
+           <string notr="true">QGroupBox{background:#f2f2f2;border:1px solid #ddd;border-radius:6px;margin-top:12px;padding-top:10px;}
+                                                QGroupBox::title{subcontrol-origin: margin;left:8px;}</string>
+          </property>
+          <property name="title">
+           <string>Mesas</string>
+          </property>
+          <layout class="QVBoxLayout" name="gbMesasV">
+           <item>
+            <widget class="QTableWidget" name="tblMesas"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="gbInvitados">
+          <property name="styleSheet">
+           <string notr="true">QGroupBox{background:#f2f2f2;border:1px solid #ddd;border-radius:6px;margin-top:12px;padding-top:10px;}
+                                                QGroupBox::title{subcontrol-origin: margin;left:8px;}</string>
+          </property>
+          <property name="title">
+           <string>Invitados</string>
+          </property>
+          <layout class="QVBoxLayout" name="gbInvitadosV">
+           <item>
+            <widget class="QTableWidget" name="tblInvitados"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="rightPanel">
+        <item>
+         <layout class="QHBoxLayout" name="topButtons">
+          <item>
+           <spacer name="spacerTop">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnConfirmar">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{background:#00d35a;color:#000;font-weight:700;border:none;border-radius:6px;padding:8px 14px;}
+                                                        QPushButton:hover{filter:brightness(0.95);}</string>
+            </property>
+            <property name="text">
+             <string>Confirmar</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnAnadir">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{background:#31e36a;color:#000;font-weight:700;border:none;border-radius:6px;padding:8px 14px;}
+                                                        QPushButton:hover{filter:brightness(0.95);}</string>
+            </property>
+            <property name="text">
+             <string>Añadir</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnEliminar">
+            <property name="styleSheet">
+             <string notr="true">QPushButton{background:#ff3b30;color:#fff;font-weight:700;border:none;border-radius:6px;padding:8px 14px;}
+                                                        QPushButton:hover{filter:brightness(0.95);}</string>
+            </property>
+            <property name="text">
+             <string>Eliminar</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QFrame" name="cardPreview">
+          <property name="styleSheet">
+           <string notr="true">QFrame#cardPreview{background:#ffffff;border-radius:6px;}</string>
+          </property>
+          <layout class="QVBoxLayout" name="cardV">
+           <item>
+            <widget class="QFrame" name="arena">
+             <property name="minimumSize">
+              <size>
+               <width>480</width>
+               <height>420</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QFrame#arena{background:qradialgradient(cx:0.5,cy:0.5,radius:0.9,stop:0 #d1ecff, stop:1 #a8d7ff);border-radius:200px;}</string>
+             </property>
+             <layout class="QGridLayout" name="arenaGrid">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetMinimumSize</enum>
+              </property>
+              <property name="spacing">
+               <number>16</number>
+              </property>
+              <item row="0" column="1">
+               <layout class="QVBoxLayout" name="avatarTop">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
-                    <layout class="QHBoxLayout" name="rowMain">
-                        <item>
-                            <layout class="QVBoxLayout" name="leftPanel">
-                                <item>
-                                    <layout class="QHBoxLayout" name="leftTopBar">
-                                        <item>
-                                            <widget class="QToolButton" name="btnBack">
-                                                <property name="toolTip">
-                                                    <string>Volver</string>
-                                                </property>
-                                                <property name="styleSheet">
-                                                    <string notr="true">QToolButton{font:16pt;background:transparent;border:none;}</string>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&lt;-</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                        <item>
-                                            <widget class="QPushButton" name="pushButton">
-                                                <property name="text">
-                                                    <string>PushButton</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                    </layout>
-                                </item>
-                                <item>
-                                    <widget class="QGroupBox" name="gbMesas">
-                                        <property name="styleSheet">
-                                            <string notr="true">QGroupBox{background:#f2f2f2;border:1px solid #ddd;border-radius:6px;margin-top:12px;padding-top:10px;}
-                                                QGroupBox::title{subcontrol-origin: margin;left:8px;}</string>
-                                        </property>
-                                        <property name="title">
-                                            <string>Mesas</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="gbMesasV">
-                                            <item>
-                                                <widget class="QTableWidget" name="tblMesas"/>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <widget class="QGroupBox" name="gbInvitados">
-                                        <property name="styleSheet">
-                                            <string notr="true">QGroupBox{background:#f2f2f2;border:1px solid #ddd;border-radius:6px;margin-top:12px;padding-top:10px;}
-                                                QGroupBox::title{subcontrol-origin: margin;left:8px;}</string>
-                                        </property>
-                                        <property name="title">
-                                            <string>Invitados</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="gbInvitadosV">
-                                            <item>
-                                                <widget class="QTableWidget" name="tblInvitados"/>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
-                            </layout>
-                        </item>
-                        <item>
-                            <layout class="QVBoxLayout" name="rightPanel">
-                                <item>
-                                    <layout class="QHBoxLayout" name="topButtons">
-                                        <item>
-                                            <spacer name="spacerTop">
-                                                <property name="orientation">
-                                                    <enum>Qt::Horizontal</enum>
-                                                </property>
-                                                <property name="sizeHint" stdset="0">
-                                                    <size>
-                                                        <width>40</width>
-                                                        <height>20</height>
-                                                    </size>
-                                                </property>
-                                            </spacer>
-                                        </item>
-                                        <item>
-                                            <widget class="QPushButton" name="btnConfirmar">
-                                                <property name="styleSheet">
-                                                    <string notr="true">QPushButton{background:#00d35a;color:#000;font-weight:700;border:none;border-radius:6px;padding:8px 14px;}
-                                                        QPushButton:hover{filter:brightness(0.95);}</string>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Confirmar</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                        <item>
-                                            <widget class="QPushButton" name="btnAnadir">
-                                                <property name="styleSheet">
-                                                    <string notr="true">QPushButton{background:#31e36a;color:#000;font-weight:700;border:none;border-radius:6px;padding:8px 14px;}
-                                                        QPushButton:hover{filter:brightness(0.95);}</string>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Añadir</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                        <item>
-                                            <widget class="QPushButton" name="btnEliminar">
-                                                <property name="styleSheet">
-                                                    <string notr="true">QPushButton{background:#ff3b30;color:#fff;font-weight:700;border:none;border-radius:6px;padding:8px 14px;}
-                                                        QPushButton:hover{filter:brightness(0.95);}</string>
-                                                </property>
-                                                <property name="text">
-                                                    <string>Eliminar</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                    </layout>
-                                </item>
-                                <item>
-                                    <widget class="QFrame" name="cardPreview">
-                                        <property name="styleSheet">
-                                            <string notr="true">QFrame#cardPreview{background:#ffffff;border-radius:6px;}</string>
-                                        </property>
-                                        <layout class="QVBoxLayout" name="cardV">
-                                            <item>
-                                                <widget class="QFrame" name="arena">
-                                                    <property name="minimumSize">
-                                                        <size>
-                                                            <width>480</width>
-                                                            <height>420</height>
-                                                        </size>
-                                                    </property>
-                                                    <property name="styleSheet">
-                                                        <string notr="true">QFrame#arena{background:qradialgradient(cx:0.5,cy:0.5,radius:0.9,stop:0 #d1ecff, stop:1 #a8d7ff);border-radius:200px;}</string>
-                                                    </property>
-                                                    <layout class="QGridLayout" name="arenaGrid">
-                                                        <property name="sizeConstraint">
-                                                            <enum>QLayout::SetMinimumSize</enum>
-                                                        </property>
-                                                        <property name="spacing">
-                                                            <number>16</number>
-                                                        </property>
-                                                        <item row="0" column="1">
-                                                            <layout class="QVBoxLayout" name="avatarTop">
-                                                                <property name="spacing">
-                                                                    <number>4</number>
-                                                                </property>
-                                                                <property name="leftMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="topMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="rightMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="bottomMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <item>
-                                                                    <widget class="QLabel" name="iconTop">
-                                                                        <property name="minimumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="maximumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="styleSheet">
-                                                                            <string notr="true">QLabel{background:transparent;}</string>
-                                                                        </property>
-                                                                        <property name="pixmap">
-                                                                            <pixmap>Resources/Icons/Azul.png</pixmap>
-                                                                        </property>
-                                                                        <property name="scaledContents">
-                                                                            <bool>true</bool>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                                <item>
-                                                                    <widget class="QLabel" name="lblTop">
-                                                                        <property name="text">
-                                                                            <string>María</string>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                            </layout>
-                                                        </item>
-                                                        <item row="1" column="0">
-                                                            <layout class="QVBoxLayout" name="avatarLeftTop">
-                                                                <property name="spacing">
-                                                                    <number>4</number>
-                                                                </property>
-                                                                <property name="leftMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="topMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="rightMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="bottomMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <item>
-                                                                    <widget class="QLabel" name="iconLeftTop">
-                                                                        <property name="minimumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="maximumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="styleSheet">
-                                                                            <string notr="true">QLabel{background:transparent;}</string>
-                                                                        </property>
-                                                                        <property name="pixmap">
-                                                                            <pixmap>Resources/Icons/Naranja.png</pixmap>
-                                                                        </property>
-                                                                        <property name="scaledContents">
-                                                                            <bool>true</bool>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                                <item>
-                                                                    <widget class="QLabel" name="lblLeftTop">
-                                                                        <property name="text">
-                                                                            <string>Pablo</string>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                            </layout>
-                                                        </item>
-                                                        <item row="2" column="0">
-                                                            <layout class="QVBoxLayout" name="avatarLeftBottom">
-                                                                <property name="spacing">
-                                                                    <number>4</number>
-                                                                </property>
-                                                                <property name="leftMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="topMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="rightMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="bottomMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <item>
-                                                                    <widget class="QLabel" name="iconLeftBottom">
-                                                                        <property name="minimumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="maximumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="styleSheet">
-                                                                            <string notr="true">QLabel{background:transparent;}</string>
-                                                                        </property>
-                                                                        <property name="pixmap">
-                                                                            <pixmap>Resources/Icons/Azul.png</pixmap>
-                                                                        </property>
-                                                                        <property name="scaledContents">
-                                                                            <bool>true</bool>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                                <item>
-                                                                    <widget class="QLabel" name="lblLeftBottom">
-                                                                        <property name="text">
-                                                                            <string>José</string>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                            </layout>
-                                                        </item>
-                                                        <item row="2" column="2">
-                                                            <layout class="QVBoxLayout" name="avatarRightBottom">
-                                                                <property name="spacing">
-                                                                    <number>4</number>
-                                                                </property>
-                                                                <property name="leftMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="topMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="rightMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="bottomMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <item>
-                                                                    <widget class="QLabel" name="iconRightBottom">
-                                                                        <property name="minimumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="maximumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="styleSheet">
-                                                                            <string notr="true">QLabel{background:transparent;}</string>
-                                                                        </property>
-                                                                        <property name="pixmap">
-                                                                            <pixmap>Resources/Icons/Verde.png</pixmap>
-                                                                        </property>
-                                                                        <property name="scaledContents">
-                                                                            <bool>true</bool>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                                <item>
-                                                                    <widget class="QLabel" name="lblRightBottom">
-                                                                        <property name="text">
-                                                                            <string>Lucía</string>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                            </layout>
-                                                        </item>
-                                                        <item row="3" column="1">
-                                                            <layout class="QVBoxLayout" name="avatarBottom">
-                                                                <property name="spacing">
-                                                                    <number>4</number>
-                                                                </property>
-                                                                <property name="leftMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="topMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="rightMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="bottomMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <item>
-                                                                    <widget class="QLabel" name="iconBottom">
-                                                                        <property name="minimumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="maximumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="styleSheet">
-                                                                            <string notr="true">QLabel{background:transparent;}</string>
-                                                                        </property>
-                                                                        <property name="pixmap">
-                                                                            <pixmap>Resources/Icons/Rojo.png</pixmap>
-                                                                        </property>
-                                                                        <property name="scaledContents">
-                                                                            <bool>true</bool>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                                <item>
-                                                                    <widget class="QLabel" name="lblBottom">
-                                                                        <property name="text">
-                                                                            <string>Pepe</string>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                            </layout>
-                                                        </item>
-                                                        <item row="1" column="1" rowspan="2">
-                                                            <widget class="QFrame" name="centerBubble">
-                                                                <property name="styleSheet">
-                                                                    <string notr="true">QFrame#centerBubble{background:#ffffff;border-radius:100px;border:1px solid rgba(0,0,0,10%);}</string>
-                                                                </property>
-                                                                <layout class="QVBoxLayout" name="bubbleV">
-                                                                    <item>
-                                                                        <widget class="QLabel" name="lblTituloMesa">
-                                                                            <property name="text">
-                                                                                <string>Mesa 12</string>
-                                                                            </property>
-                                                                            <property name="alignment">
-                                                                                <set>Qt::AlignCenter</set>
-                                                                            </property>
-                                                                        </widget>
-                                                                    </item>
-                                                                    <item>
-                                                                        <widget class="QLabel" name="lblAsientos">
-                                                                            <property name="text">
-                                                                                <string>Asientos: 8/10</string>
-                                                                            </property>
-                                                                            <property name="alignment">
-                                                                                <set>Qt::AlignCenter</set>
-                                                                            </property>
-                                                                        </widget>
-                                                                    </item>
-                                                                    <item>
-                                                                        <widget class="QLabel" name="lblCompat">
-                                                                            <property name="text">
-                                                                                <string>Compatibilidad: 92</string>
-                                                                            </property>
-                                                                            <property name="alignment">
-                                                                                <set>Qt::AlignCenter</set>
-                                                                            </property>
-                                                                        </widget>
-                                                                    </item>
-                                                                </layout>
-                                                            </widget>
-                                                        </item>
-                                                        <item row="1" column="2">
-                                                            <layout class="QVBoxLayout" name="avatarRightTop">
-                                                                <property name="spacing">
-                                                                    <number>4</number>
-                                                                </property>
-                                                                <property name="leftMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="topMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="rightMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <property name="bottomMargin">
-                                                                    <number>0</number>
-                                                                </property>
-                                                                <item>
-                                                                    <widget class="QLabel" name="iconRightTop">
-                                                                        <property name="minimumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="maximumSize">
-                                                                            <size>
-                                                                                <width>64</width>
-                                                                                <height>64</height>
-                                                                            </size>
-                                                                        </property>
-                                                                        <property name="styleSheet">
-                                                                            <string notr="true">QLabel{background:transparent;}</string>
-                                                                        </property>
-                                                                        <property name="pixmap">
-                                                                            <pixmap>Resources/Icons/Verde.png</pixmap>
-                                                                        </property>
-                                                                        <property name="scaledContents">
-                                                                            <bool>true</bool>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                                <item>
-                                                                    <widget class="QLabel" name="lblRightTop">
-                                                                        <property name="text">
-                                                                            <string>Laura</string>
-                                                                        </property>
-                                                                        <property name="alignment">
-                                                                            <set>Qt::AlignCenter</set>
-                                                                        </property>
-                                                                    </widget>
-                                                                </item>
-                                                            </layout>
-                                                        </item>
-                                                    </layout>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </widget>
-                                </item>
-                            </layout>
-                        </item>
-                    </layout>
+                 <widget class="QLabel" name="iconTop">
+                  <property name="minimumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{background:transparent;}</string>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap>Resources/Icons/Azul.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
                 </item>
                 <item>
-                    <layout class="QHBoxLayout" name="searchRow">
-                        <item>
-                            <spacer name="spacerSearchLeft">
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>0</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                        <item>
-                            <widget class="QLineEdit" name="txtBuscar">
-                                <property name="styleSheet">
-                                    <string notr="true">QLineEdit{background:#ffffff;border:1px solid #cfcfcf;border-radius:6px;padding:6px 10px;font:600 12pt &quot;Segoe UI&quot;;}</string>
-                                </property>
-                                <property name="placeholderText">
-                                    <string>Escribe aquí el evento que quieras buscar</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item>
-                            <widget class="QToolButton" name="btnBuscar">
-                                <property name="text">
-                                    <string>Buscar</string>
-                                </property>
-                            </widget>
-                        </item>
-                        <item>
-                            <spacer name="spacerSearchRight">
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>0</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                    </layout>
+                 <widget class="QLabel" name="lblTop">
+                  <property name="text">
+                   <string>María</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
                 </item>
-            </layout>
-        </widget>
-        <widget class="QStatusBar" name="statusbar"/>
-    </widget>
-    <resources/>
-    <connections/>
+               </layout>
+              </item>
+              <item row="1" column="0">
+               <layout class="QVBoxLayout" name="avatarLeftTop">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="iconLeftTop">
+                  <property name="minimumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{background:transparent;}</string>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap>Resources/Icons/Naranja.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="lblLeftTop">
+                  <property name="text">
+                   <string>Pablo</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="0">
+               <layout class="QVBoxLayout" name="avatarLeftBottom">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="iconLeftBottom">
+                  <property name="minimumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{background:transparent;}</string>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap>Resources/Icons/Azul.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="lblLeftBottom">
+                  <property name="text">
+                   <string>José</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="2">
+               <layout class="QVBoxLayout" name="avatarRightBottom">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="iconRightBottom">
+                  <property name="minimumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{background:transparent;}</string>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap>Resources/Icons/Verde.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="lblRightBottom">
+                  <property name="text">
+                   <string>Lucía</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="3" column="1">
+               <layout class="QVBoxLayout" name="avatarBottom">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="iconBottom">
+                  <property name="minimumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{background:transparent;}</string>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap>Resources/Icons/Rojo.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="lblBottom">
+                  <property name="text">
+                   <string>Pepe</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="1" column="1" rowspan="2">
+               <widget class="QFrame" name="centerBubble">
+                <property name="styleSheet">
+                 <string notr="true">QFrame#centerBubble{background:#ffffff;border-radius:100px;border:1px solid rgba(0,0,0,10%);}</string>
+                </property>
+                <layout class="QVBoxLayout" name="bubbleV">
+                 <item>
+                  <widget class="QLabel" name="lblTituloMesa">
+                   <property name="text">
+                    <string>Mesa 12</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="lblAsientos">
+                   <property name="text">
+                    <string>Asientos: 8/10</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="lblCompat">
+                   <property name="text">
+                    <string>Compatibilidad: 92</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <layout class="QVBoxLayout" name="avatarRightTop">
+                <property name="spacing">
+                 <number>4</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="iconRightTop">
+                  <property name="minimumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>64</width>
+                    <height>64</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{background:transparent;}</string>
+                  </property>
+                  <property name="pixmap">
+                   <pixmap>Resources/Icons/Verde.png</pixmap>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="lblRightTop">
+                  <property name="text">
+                   <string>Laura</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="searchRow">
+      <item>
+       <spacer name="spacerSearchLeft">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="txtBuscar">
+        <property name="styleSheet">
+         <string notr="true">QLineEdit{background:#ffffff;border:1px solid #cfcfcf;border-radius:6px;padding:6px 10px;font:600 12pt &quot;Segoe UI&quot;;}</string>
+        </property>
+        <property name="placeholderText">
+         <string>Escribe aquí el evento que quieras buscar</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="btnBuscar">
+        <property name="text">
+         <string>Buscar</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="spacerSearchRight">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
 </ui>
