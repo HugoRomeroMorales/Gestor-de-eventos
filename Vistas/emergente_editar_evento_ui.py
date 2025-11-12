@@ -11,11 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_EmergenteAnadirEvento(object):
-    def setupUi(self, EmergenteAnadirEvento):
-        EmergenteAnadirEvento.setObjectName("EmergenteAnadirEvento")
-        EmergenteAnadirEvento.resize(1247, 661)
-        self.centralwidget = QtWidgets.QWidget(EmergenteAnadirEvento)
+class Ui_EmergenteEditarEvento(object):
+    def setupUi(self, EmergenteEditarEvento):
+        EmergenteEditarEvento.setObjectName("EmergenteEditarEvento")
+        EmergenteEditarEvento.resize(1247, 661)
+        self.centralwidget = QtWidgets.QWidget(EmergenteEditarEvento)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setContentsMargins(60, 36, 60, 36)
@@ -30,14 +30,14 @@ class Ui_EmergenteAnadirEvento(object):
         self.lblHora.setFont(font)
         self.lblHora.setObjectName("lblHora")
         self.gridLayout.addWidget(self.lblHora, 6, 0, 1, 1)
-        self.btnAnadir = QtWidgets.QPushButton(self.centralwidget)
+        self.btnGuardar = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnAnadir.sizePolicy().hasHeightForWidth())
-        self.btnAnadir.setSizePolicy(sizePolicy)
-        self.btnAnadir.setObjectName("btnAnadir")
-        self.gridLayout.addWidget(self.btnAnadir, 11, 1, 1, 1)
+        sizePolicy.setHeightForWidth(self.btnGuardar.sizePolicy().hasHeightForWidth())
+        self.btnGuardar.setSizePolicy(sizePolicy)
+        self.btnGuardar.setObjectName("btnGuardar")
+        self.gridLayout.addWidget(self.btnGuardar, 11, 1, 1, 1)
         self.lblFecha = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -122,28 +122,38 @@ class Ui_EmergenteAnadirEvento(object):
         self.gridLayout.setColumnMinimumWidth(1, 4)
         self.gridLayout.setColumnMinimumWidth(2, 9)
         self.gridLayout.setColumnMinimumWidth(3, 5)
-        EmergenteAnadirEvento.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(EmergenteAnadirEvento)
+        EmergenteEditarEvento.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(EmergenteEditarEvento)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1247, 21))
         self.menubar.setObjectName("menubar")
-        EmergenteAnadirEvento.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(EmergenteAnadirEvento)
+        EmergenteEditarEvento.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(EmergenteEditarEvento)
         self.statusbar.setObjectName("statusbar")
-        EmergenteAnadirEvento.setStatusBar(self.statusbar)
+        EmergenteEditarEvento.setStatusBar(self.statusbar)
 
-        self.retranslateUi(EmergenteAnadirEvento)
-        QtCore.QMetaObject.connectSlotsByName(EmergenteAnadirEvento)
+        self.retranslateUi(EmergenteEditarEvento)
+        QtCore.QMetaObject.connectSlotsByName(EmergenteEditarEvento)
 
-    def retranslateUi(self, EmergenteAnadirEvento):
+    def retranslateUi(self, EmergenteEditarEvento):
         _translate = QtCore.QCoreApplication.translate
-        EmergenteAnadirEvento.setWindowTitle(_translate("EmergenteAnadirEvento", "Nuevo evento"))
-        self.lblHora.setText(_translate("EmergenteAnadirEvento", "Hora:"))
-        self.btnAnadir.setText(_translate("EmergenteAnadirEvento", "+ Editar"))
-        self.lblFecha.setText(_translate("EmergenteAnadirEvento", "Fecha:"))
-        self.lblOrganizadores.setText(_translate("EmergenteAnadirEvento", "Personas que lo organizan:"))
-        self.lblTipo.setText(_translate("EmergenteAnadirEvento", "Tipo de evento:"))
-        self.lblMesas.setText(_translate("EmergenteAnadirEvento", "¿Cuántas mesas quieres?"))
-        self.lblUbicacion.setText(_translate("EmergenteAnadirEvento", "Ubicación:"))
-        self.dateFecha.setDisplayFormat(_translate("EmergenteAnadirEvento", "dd/MM/yyyy"))
-        self.timeHora.setDisplayFormat(_translate("EmergenteAnadirEvento", "HH:mm"))
-        self.btnCancelar.setText(_translate("EmergenteAnadirEvento", "✖ Cancelar"))
+        EmergenteEditarEvento.setWindowTitle(_translate("EmergenteEditarEvento", "Editar evento"))
+        self.lblHora.setText(_translate("EmergenteEditarEvento", "Hora:"))
+        self.btnGuardar.setText(_translate("EmergenteEditarEvento", "💾 Guardar"))
+        self.lblFecha.setText(_translate("EmergenteEditarEvento", "Fecha:"))
+        self.lblOrganizadores.setText(_translate("EmergenteEditarEvento", "Personas que lo organizan:"))
+        self.lblTipo.setText(_translate("EmergenteEditarEvento", "Tipo de evento:"))
+        self.lblMesas.setText(_translate("EmergenteEditarEvento", "¿Cuántas mesas quieres?"))
+        self.lblUbicacion.setText(_translate("EmergenteEditarEvento", "Ubicación:"))
+        self.dateFecha.setDisplayFormat(_translate("EmergenteEditarEvento", "dd/MM/yyyy"))
+        self.timeHora.setDisplayFormat(_translate("EmergenteEditarEvento", "HH:mm"))
+        self.btnCancelar.setText(_translate("EmergenteEditarEvento", "✖ Cancelar"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    EmergenteEditarEvento = QtWidgets.QMainWindow()
+    ui = Ui_EmergenteEditarEvento()
+    ui.setupUi(EmergenteEditarEvento)
+    EmergenteEditarEvento.show()
+    sys.exit(app.exec_())

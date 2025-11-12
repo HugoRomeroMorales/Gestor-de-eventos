@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Vistas/Emergente_añadir_persona.ui'
+# Form implementation generated from reading ui file 'Vistas/emergente_anadir_persona.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -124,3 +124,13 @@ class Ui_EmergenteAnadirEvento(object):
         self.lblFecha.setText(_translate("EmergenteAnadirEvento", "Prefencias de con quien estar"))
         self.btnCancelar.setText(_translate("EmergenteAnadirEvento", "✖ Cancelar"))
         self.lblOrganizadores.setText(_translate("EmergenteAnadirEvento", "Apellidos:"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    EmergenteAnadirEvento = QtWidgets.QMainWindow()
+    ui = Ui_EmergenteAnadirEvento()
+    ui.setupUi(EmergenteAnadirEvento)
+    EmergenteAnadirEvento.show()
+    sys.exit(app.exec_())
