@@ -5,22 +5,22 @@ QMainWindow, QWidget#centralwidget {
   font-size: 12.5pt;
   color: #111;
 }
- 
+
 /* ===== Tarjeta blanca ===== */
 QWidget#card {
   background: #FFFFFF;
   border: 1px solid rgba(0,0,0,0.10);
   border-radius: 10px;
 }
- 
+
 /* ===== Título ===== */
 QLabel#lblTitulo {
   color: #111;
   font-size: 17pt;
   font-weight: 700;
-  letter-spacing: .3px;
+  /* letter-spacing no soportado en Qt */
 }
- 
+
 /* ===== Botones de acción (base) ===== */
 QPushButton {
   border: none;
@@ -30,43 +30,37 @@ QPushButton {
   color: #0b0b0b;
   background: #e9edf3;
 }
-QPushButton:hover { filter: brightness(1.04); }
-QPushButton:pressed { transform: translateY(1px); }
- 
+/* Sustitutos compatibles para hover/pressed */
+QPushButton:hover  { background: #e3e8f0; }
+QPushButton:pressed{
+  background: #d8dee8;
+  padding-top: 7px;               /* simula translateY(1px) */
+  padding-bottom: 5px;
+}
+
 /* Verde: + Añadir */
-QPushButton#btnAnadir {
-  background: #2ECC71;
-  color: #0b3b1f;
-}
-QPushButton#btnAnadir:hover  { background: #29C267; }
-QPushButton#btnAnadir:pressed{ background: #22A556; }
- 
+QPushButton#btnAnadir         { background: #2ECC71; color: #0b3b1f; }
+QPushButton#btnAnadir:hover   { background: #29C267; }
+QPushButton#btnAnadir:pressed { background: #22A556; padding-top: 7px; padding-bottom: 5px; }
+
 /* Ámbar: ✎ Editar */
-QPushButton#btnEditar {
-  background: #F1C40F;
-  color: #5a4300;
-}
-QPushButton#btnEditar:hover  { background: #E7BB0E; }
-QPushButton#btnEditar:pressed{ background: #C9A30C; }
- 
+QPushButton#btnEditar         { background: #F1C40F; color: #5a4300; }
+QPushButton#btnEditar:hover   { background: #E7BB0E; }
+QPushButton#btnEditar:pressed { background: #C9A30C; padding-top: 7px; padding-bottom: 5px; }
+
 /* Rojo: 🗑 Eliminar */
-QPushButton#btnEliminar {
-  background: #E74C3C;
-  color: #fff;
-}
-QPushButton#btnEliminar:hover  { background: #D94333; }
-QPushButton#btnEliminar:pressed{ background: #BF3527; }
- 
+QPushButton#btnEliminar         { background: #E74C3C; color: #fff; }
+QPushButton#btnEliminar:hover   { background: #D94333; }
+QPushButton#btnEliminar:pressed { background: #BF3527; padding-top: 7px; padding-bottom: 5px; }
+
 /* ===== Lista de eventos ===== */
 QListWidget#lstEventos {
   background: #F5F7FB;
   border: 1px solid rgba(0,0,0,0.15);
   border-radius: 8px;
   outline: none;
-  padding: 10px;                 /* separa los items del borde */
+  padding: 10px;
 }
- 
-/* Item “tarjetita” gris */
 QListWidget#lstEventos::item {
   margin: 6px 4px;
   padding: 14px 16px;
@@ -74,17 +68,9 @@ QListWidget#lstEventos::item {
   color: #0e0e0e;
   border-radius: 8px;
 }
- 
-/* Hover y seleccionado */
-QListWidget#lstEventos::item:hover {
-  background: #AFAFAF;
-}
-QListWidget#lstEventos::item:selected {
-  background: #9E9E9E;
-  color: #000;
-  border: 2px solid rgba(0,0,0,0.20);
-}
- 
+QListWidget#lstEventos::item:hover    { background: #AFAFAF; }
+QListWidget#lstEventos::item:selected { background: #9E9E9E; color: #000; border: 2px solid rgba(0,0,0,0.20); }
+
 /* Scrollbar discreta */
 QListWidget#lstEventos QScrollBar:vertical {
   background: transparent;
@@ -97,7 +83,7 @@ QListWidget#lstEventos QScrollBar::handle:vertical {
 }
 QListWidget#lstEventos QScrollBar::add-line:vertical,
 QListWidget#lstEventos QScrollBar::sub-line:vertical { height: 0; }
- 
+
 /* ===== Buscador ===== */
 QLineEdit#txtBuscar {
   background: #ffffff;
@@ -107,10 +93,9 @@ QLineEdit#txtBuscar {
   min-height: 34px;
 }
 QLineEdit#txtBuscar:focus {
-  border-color: #4AA3FF;
-  box-shadow: 0 0 0 3px rgba(74,163,255,0.20);
+  border-color: #4AA3FF;         /* box-shadow no existe en Qt */
 }
- 
+
 /* Lupa */
 QToolButton#btnBuscar {
   background: #ffffff;
@@ -122,6 +107,6 @@ QToolButton#btnBuscar {
 }
 QToolButton#btnBuscar:hover  { background: #f6faff; border-color: #4AA3FF; }
 QToolButton#btnBuscar:pressed{ background: #e9f3ff; }
- 
+
 /* ===== QoL ===== */
-*:disabled { opacity: .6; }
+/* opacity no existe: usa colores con alfa o deshabilita por código */

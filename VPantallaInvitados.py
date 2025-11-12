@@ -1,24 +1,54 @@
-import os
-import json
-import csv
+# VPantallaInvitados.py
+# Pantalla de Invitados sin checkbox: selección por fila + QSS styleInvitados.qss
 
-from PyQt5 import QtWidgets, QtCore
+import os
+import csv
+import re
+
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QMessageBox, QFileDialog,
-    QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QComboBox
+    QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox, QMenu,
+    QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QComboBox,
+    QToolButton
 )
 
+from Vistas.pantalla2_ui import Ui_MainWindow  # <-- ajusta si tu .ui usa otro nombre
 
-from Vistas.pantalla2_ui import Ui_MainWindow
+# ------------------ Configuración ------------------
+CAMPOS = ["nombre", "apellido", "pref_con", "pref_sin", "rol"]
 
-
-# ------------------ Modelo de datos ------------------
-CAMPOS = ["nombre", "apellido", "pref_con", "rol", "pref_sin"]
+# Tolerancia de cabeceras "bonitas" al importar CSV
+CSV_MAP = {
+    "nombre": "nombre",
+    "apellido": "apellido",
+    "prefiere con": "pref_con",
+    "preferencias de con quien estar": "pref_con",
+    "preferencias de con quién estar": "pref_con",
+    "prefiere sin": "pref_sin",
+    "preferencias de con quien no estar": "pref_sin",
+    "preferencias de con quién no estar": "pref_sin",
+    "rol": "rol",
+}
 
 def invitado_vacio():
-    """Crea un dict con todas las claves vacías."""
+    """Crea un dict base para un invitado."""
     return {k: "" for k in CAMPOS}
 
+def slug(texto: str) -> str:
+    """Convierte un texto a un nombre de archivo seguro."""
+    s = re.sub(r"[^\w\s-]", "", texto, flags=re.UNICODE)
+    s = re.sub(r"\s+", "_", s.strip())
+    return s.lower() or "archivo"
+
+def buscar_qss(nombre="styleInvitados.qss", desde_ruta=__file__, max_up=2):
+    """Busca un QSS subiendo hasta 'max_up' niveles desde 'desde_ruta'."""
+    ruta = os.path.abspath(os.path.dirname(desde_ruta))
+    for _ in range(max_up + 1):
+        candidato = os.path.join(ruta, nombre)
+        if os.path.exists(candidato):
+            return candidato
+        ruta = os.path.abspath(os.path.join(ruta, ".."))
+    return None
 
 # ------------------ Diálogo añadir/editar ------------------
 class InvitadoDialog(QDialog):
@@ -30,279 +60,281 @@ class InvitadoDialog(QDialog):
 
         self.edtNombre   = QLineEdit()
         self.edtApellido = QLineEdit()
-        self.edtPrefCon  = QLineEdit()
-        self.cmbRol      = QComboBox()
-        self.cmbRol.addItems(["", "Invitado", "VIP", "Organizador", "Ponente"])
-        self.edtPrefSin  = QLineEdit()
+        self.cmbPrefCon  = QComboBox(); self.cmbPrefCon.addItems(["", "A", "B", "C"])
+        self.cmbPrefSin  = QComboBox(); self.cmbPrefSin.addItems(["", "X", "Y", "Z"])
+        self.cmbRol      = QComboBox(); self.cmbRol.addItems(["", "Novio/a", "Familia", "Amigo/a", "Trabajo"])
 
-        layout = QFormLayout(self)
-        layout.addRow("Nombre:", self.edtNombre)
-        layout.addRow("Apellido:", self.edtApellido)
-        layout.addRow("Pref. con quién estar:", self.edtPrefCon)
-        layout.addRow("Rol:", self.cmbRol)
-        layout.addRow("Pref. con quién NO estar:", self.edtPrefSin)
+        form = QFormLayout(self)
+        form.addRow("Nombre:",   self.edtNombre)
+        form.addRow("Apellido:", self.edtApellido)
+        form.addRow("Preferencias de con quién estar:", self.cmbPrefCon)
+        form.addRow("Preferencias de con quién no estar:", self.cmbPrefSin)
+        form.addRow("Rol:", self.cmbRol)
 
         btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        layout.addRow(btns)
         btns.accepted.connect(self.accept)
         btns.rejected.connect(self.reject)
+        form.addRow(btns)
 
         if invitado:
             self.edtNombre.setText(invitado.get("nombre", ""))
             self.edtApellido.setText(invitado.get("apellido", ""))
-            self.edtPrefCon.setText(invitado.get("pref_con", ""))
+            self.cmbPrefCon.setCurrentText(invitado.get("pref_con", ""))
+            self.cmbPrefSin.setCurrentText(invitado.get("pref_sin", ""))
             self.cmbRol.setCurrentText(invitado.get("rol", ""))
-            self.edtPrefSin.setText(invitado.get("pref_sin", ""))
 
     def datos(self):
         """Devuelve los datos del formulario como dict."""
         return {
-            "nombre": self.edtNombre.text().strip(),
+            "nombre":   self.edtNombre.text().strip(),
             "apellido": self.edtApellido.text().strip(),
-            "pref_con": self.edtPrefCon.text().strip(),
-            "rol": self.cmbRol.currentText().strip(),
-            "pref_sin": self.edtPrefSin.text().strip(),
+            "pref_con": self.cmbPrefCon.currentText(),
+            "pref_sin": self.cmbPrefSin.currentText(),
+            "rol":      self.cmbRol.currentText(),
         }
 
-    def accept(self):
-        if not self.edtNombre.text().strip():
-            QMessageBox.warning(self, "Faltan datos", "El nombre es obligatorio.")
-            return
-        super().accept()
-
-
-# ------------------ Ventana principal (Controlador) ------------------
-class MainWindow(QMainWindow, Ui_MainWindow):
-    RUTA_JSON = os.path.join("data", "participantes.json")
-    
-   
-
+# ------------------ Controlador ------------------
+class VPantallaInvitados(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)   # Construye la UI creada en Qt Designer
-            
-        with open("styleInvitados.qss","r",encoding="utf-8") as f:
-            self.setStyleSheet(f.read())  
-            
-        # Estado en memoria
-        self.participantes = []
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
 
-        # Configuramos la tabla:
-        # - Añadimos una columna 0 para checkboxes
-        # - Dejas las 5 columnas de datos: Nombre, Apellido, Pref de estar, Rol, Pref no estar
-        self.tblInvitados.setColumnCount(6)
-        headers = ["", "Nombre", "Apellido", "Pref de estar", "Rol",
-                   "Preferencias de con quien no estar"]
-        for i, t in enumerate(headers):
-            self.tblInvitados.setHorizontalHeaderItem(i, QtWidgets.QTableWidgetItem(t))
+        # Datos en memoria
+        self.invitados = []
+        self.nombre_evento = "Nombre del Evento"
 
-        self.tblInvitados.setSortingEnabled(True)
-        self.tblInvitados.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.tblInvitados.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.tblInvitados.verticalHeader().setVisible(False)
-        self.tblInvitados.horizontalHeader().setStretchLastSection(True)
-        self.tblInvitados.doubleClicked.connect(self.on_editar)  # doble clic = editar
+        # Estilos y UI
+        self._cargar_qss()
+        self._config_labels()
+        self._config_tabla()
+        self._conectar_senales()
 
-        # Conectar señales de botones
-        self.btnAnadir.clicked.connect(self.on_anadir)
-        self.btnEditar.clicked.connect(self.on_editar)
-        self.btnEliminar.clicked.connect(self.on_eliminar)
-        self.btnSubirCSV.clicked.connect(self.on_subir_csv)
-        self.btnBuscar.clicked.connect(self.on_buscar)
-        self.txtBuscar.textChanged.connect(self.on_buscar)
-
-        # Cargar persistencia y pintar
-        self.cargar_desde_json()
+        # Estado inicial
         self.refrescar_tabla()
 
-    # ---------- Persistencia ----------
-    def _asegurar_directorio(self):
-        os.makedirs(os.path.dirname(self.RUTA_JSON), exist_ok=True)
-
-    def cargar_desde_json(self):
-        """Carga lista de participantes desde JSON si existe."""
-        self._asegurar_directorio()
-        if os.path.exists(self.RUTA_JSON):
-            try:
-                with open(self.RUTA_JSON, "r", encoding="utf-8") as f:
-                    datos = json.load(f)
-                self.participantes = [
-                    {k: str(item.get(k, "")).strip() for k in CAMPOS}
-                    for item in datos if isinstance(item, dict)
-                ]
-            except Exception as e:
-                QMessageBox.warning(self, "Error", f"No se pudo leer JSON:\n{e}")
-                self.participantes = []
-        else:
-            self.participantes = []
-
-    def guardar_a_json(self):
-        """Guarda la lista actual a JSON con sangría."""
-        self._asegurar_directorio()
+    # ---------- QSS ----------
+    def _cargar_qss(self):
         try:
-            with open(self.RUTA_JSON, "w", encoding="utf-8") as f:
-                json.dump(self.participantes, f, ensure_ascii=False, indent=2)
+            ruta = buscar_qss()
+            print("[QSS] cargando:", ruta)  # <--- ayuda a detectar qué archivo da warnings
+            if ruta:
+                with open(ruta, "r", encoding="utf-8") as f:
+                    self.setStyleSheet(f.read())
+            else:
+                print("[QSS] styleInvitados.qss no encontrado (no rompe).")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"No se pudo guardar JSON:\n{e}")
+            print(f"[QSS] Error: {e}")
 
-    # ---------- Pintado de tabla ----------
-    def _item_check(self, checked=False):
-        it = QtWidgets.QTableWidgetItem()
-        it.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-        it.setCheckState(QtCore.Qt.Checked if checked else QtCore.Qt.Unchecked)
-        return it
+    # ---------- Título / sección ----------
+    def _config_labels(self):
+        if hasattr(self.ui, "lblSeccion"):
+            self.ui.lblSeccion.setText("Invitados")
+        self._pintar_titulo()
 
-    def refrescar_tabla(self, filtrado=None):
-        """Vuelca la lista (o su versión filtrada) a la QTableWidget."""
-        datos = filtrado if filtrado is not None else self.participantes
-        self.tblInvitados.setRowCount(len(datos))
-        for fila, invit in enumerate(datos):
-            self.tblInvitados.setItem(fila, 0, self._item_check(False))
-            self.tblInvitados.setItem(fila, 1, QtWidgets.QTableWidgetItem(invit.get("nombre", "")))
-            self.tblInvitados.setItem(fila, 2, QtWidgets.QTableWidgetItem(invit.get("apellido", "")))
-            self.tblInvitados.setItem(fila, 3, QtWidgets.QTableWidgetItem(invit.get("pref_con", "")))
-            self.tblInvitados.setItem(fila, 4, QtWidgets.QTableWidgetItem(invit.get("rol", "")))
-            self.tblInvitados.setItem(fila, 5, QtWidgets.QTableWidgetItem(invit.get("pref_sin", "")))
-        self.tblInvitados.resizeColumnsToContents()
+    def set_evento(self, nombre: str):
+        """Actualiza el nombre del evento mostrado en el título."""
+        self.nombre_evento = nombre or "Nombre del Evento"
+        self._pintar_titulo()
 
-    def fila_seleccionada_index(self):
-        """Devuelve el índice en la lista base del elemento seleccionado (resistente al sorting)."""
-        sel = self.tblInvitados.currentRow()
-        if sel < 0:
-            return None
-        nombre   = self.tblInvitados.item(sel, 1).text() if self.tblInvitados.item(sel, 1) else ""
-        apellido = self.tblInvitados.item(sel, 2).text() if self.tblInvitados.item(sel, 2) else ""
-        pref_con = self.tblInvitados.item(sel, 3).text() if self.tblInvitados.item(sel, 3) else ""
-        rol      = self.tblInvitados.item(sel, 4).text() if self.tblInvitados.item(sel, 4) else ""
-        pref_sin = self.tblInvitados.item(sel, 5).text() if self.tblInvitados.item(sel, 5) else ""
-        for i, it in enumerate(self.participantes):
-            if (it["nombre"] == nombre and it["apellido"] == apellido and
-                it["pref_con"] == pref_con and it["rol"] == rol and it["pref_sin"] == pref_sin):
-                return i
-        return None
+    def _pintar_titulo(self):
+        if hasattr(self.ui, "lblTitulo"):
+            self.ui.lblTitulo.setText(f"LISTA DE PARTICIPANTES: [{self.nombre_evento}]")
 
-    # ---------- Acciones ----------
-    def on_anadir(self):
-        dlg = InvitadoDialog(invitado_vacio(), self)
-        if dlg.exec_() == QDialog.Accepted:
-            self.participantes.append(dlg.datos())
-            self.guardar_a_json()
-            self.refrescar_tabla()
-            self.statusbar.showMessage("Invitado añadido", 2500)
+    # ---------- Tabla ----------
+    def _config_tabla(self):
+        tbl = self.ui.tblInvitados
+        tbl.setColumnCount(5)
+        tbl.setHorizontalHeaderLabels([
+            "Nombre",
+            "Apellido",
+            "Preferencias de con quién estar",
+            "Preferencias de con quién no estar",
+            "Rol",
+        ])
+        tbl.horizontalHeader().setStretchLastSection(True)
+        tbl.setSelectionBehavior(tbl.SelectRows)           # filas completas
+        tbl.setSelectionMode(tbl.ExtendedSelection)        # múltiple (Eliminar)
+        tbl.setEditTriggers(tbl.NoEditTriggers)
+        tbl.setAlternatingRowColors(True)                  # activa alternate-background-color del QSS
+        tbl.doubleClicked.connect(self._on_double_click_editar)
 
-    def on_editar(self):
-        idx = self.fila_seleccionada_index()
-        if idx is None:
-            QMessageBox.information(self, "Editar", "Selecciona un invitado (clic en una fila).")
-            return
-        dlg = InvitadoDialog(self.participantes[idx], self)
-        if dlg.exec_() == QDialog.Accepted:
-            self.participantes[idx] = dlg.datos()
-            self.guardar_a_json()
-            self.refrescar_tabla()
-            self.statusbar.showMessage("Invitado actualizado", 2500)
+    def refrescar_tabla(self, filtro: str = ""):
+        datos = self._filtrar(filtro)
+        tbl = self.ui.tblInvitados
+        tbl.setRowCount(len(datos))
+        for r, inv in enumerate(datos):
+            valores = [
+                inv.get("nombre", ""),
+                inv.get("apellido", ""),
+                inv.get("pref_con", ""),
+                inv.get("pref_sin", ""),
+                inv.get("rol", "")
+            ]
+            for c, val in enumerate(valores):
+                tbl.setItem(r, c, QTableWidgetItem(str(val)))
 
-    def on_eliminar(self):
-        # Primero intentamos borrado múltiple si hay checkboxes marcados
-        marcados = []
-        for fila in range(self.tblInvitados.rowCount()):
-            it = self.tblInvitados.item(fila, 0)
-            if it and it.checkState() == QtCore.Qt.Checked:
-                nombre   = self.tblInvitados.item(fila, 1).text()
-                apellido = self.tblInvitados.item(fila, 2).text()
-                pref_con = self.tblInvitados.item(fila, 3).text()
-                rol      = self.tblInvitados.item(fila, 4).text()
-                pref_sin = self.tblInvitados.item(fila, 5).text()
-                marcados.append((nombre, apellido, pref_con, rol, pref_sin))
-
-        if marcados:
-            if QMessageBox.question(self, "Confirmar",
-                                    f"¿Eliminar {len(marcados)} invitado(s) marcados?") != QMessageBox.Yes:
-                return
-            def tupla(it): return (it["nombre"], it["apellido"], it["pref_con"], it["rol"], it["pref_sin"])
-            self.participantes = [it for it in self.participantes if tupla(it) not in marcados]
-            self.guardar_a_json()
-            self.refrescar_tabla()
-            self.statusbar.showMessage("Invitados eliminados", 2500)
-            return
-
-        # Si no hay checks, borramos la fila seleccionada
-        idx = self.fila_seleccionada_index()
-        if idx is None:
-            QMessageBox.information(self, "Eliminar", "Marca casillas o selecciona una fila.")
-            return
-        nom = f'{self.participantes[idx]["nombre"]} {self.participantes[idx]["apellido"]}'.strip()
-        if QMessageBox.question(self, "Confirmar", f"¿Eliminar a '{nom}'?") == QMessageBox.Yes:
-            self.participantes.pop(idx)
-            self.guardar_a_json()
-            self.refrescar_tabla()
-            self.statusbar.showMessage("Invitado eliminado", 2500)
-
-    def on_buscar(self):
-        texto = self.txtBuscar.text().strip().lower()
+    def _filtrar(self, texto: str):
         if not texto:
-            self.refrescar_tabla()
-            return
-        filtrado = [
-            it for it in self.participantes
-            if texto in it["nombre"].lower() or texto in it["apellido"].lower()
+            return self.invitados
+        f = texto.lower().strip()
+        return [
+            d for d in self.invitados
+            if f in (d.get("nombre", "") + " " + d.get("apellido", "")).lower()
         ]
-        self.refrescar_tabla(filtrado)
 
-    def on_subir_csv(self):
-        ruta, _ = QFileDialog.getOpenFileName(self, "Seleccionar CSV", "", "CSV (*.csv)")
+    def _fila_seleccionada(self):
+        idxs = self.ui.tblInvitados.selectionModel().selectedRows()
+        return idxs[0].row() if idxs else -1
+
+    def _filas_seleccionadas(self):
+        return sorted([i.row() for i in self.ui.tblInvitados.selectionModel().selectedRows()])
+
+    # ---------- Señales ----------
+    def _conectar_senales(self):
+        if hasattr(self.ui, "btnAnadir"):
+            self.ui.btnAnadir.clicked.connect(self.on_add)
+        if hasattr(self.ui, "btnEditar"):
+            self.ui.btnEditar.clicked.connect(self.on_edit)
+        if hasattr(self.ui, "btnEliminar"):
+            self.ui.btnEliminar.clicked.connect(self.on_delete)
+        if hasattr(self.ui, "btnSubirCSV"):
+            self.ui.btnSubirCSV.clicked.connect(self.on_import_csv)
+        if hasattr(self.ui, "btnGenerarMesas"):
+            self.ui.btnGenerarMesas.clicked.connect(self.on_generar_mesas)
+
+        if hasattr(self.ui, "txtBuscar"):
+            self.ui.txtBuscar.textChanged.connect(lambda t: self.refrescar_tabla(t))
+        if hasattr(self.ui, "btnBuscar"):
+            self.ui.btnBuscar.clicked.connect(lambda: self.refrescar_tabla(self.ui.txtBuscar.text()))
+
+        if hasattr(self.ui, "btnMenuTabla"):
+            # usar el enum de QToolButton, no del propio botón (más fiable)
+            self.ui.btnMenuTabla.setPopupMode(QToolButton.MenuButtonPopup)
+            menu = QMenu(self)
+            act_export = menu.addAction("Exportar CSV")
+            act_sel_all = menu.addAction("Seleccionar todo")
+            act_unsel   = menu.addAction("Deseleccionar todo")
+            act_invsel  = menu.addAction("Invertir selección")
+            act_export.triggered.connect(self.on_export_csv)
+            act_sel_all.triggered.connect(lambda: self.ui.tblInvitados.selectAll())
+            act_unsel.triggered.connect(lambda: self.ui.tblInvitados.clearSelection())
+            act_invsel.triggered.connect(self._invertir_seleccion)
+            self.ui.btnMenuTabla.setMenu(menu)
+
+    def _invertir_seleccion(self):
+        tbl = self.ui.tblInvitados
+        total = tbl.rowCount()
+        actuales = {idx.row() for idx in tbl.selectionModel().selectedRows()}
+        tbl.clearSelection()
+        for r in range(total):
+            if r not in actuales:
+                tbl.selectRow(r)
+
+    # ---------- Doble click = editar ----------
+    def _on_double_click_editar(self, *args):
+        self.on_edit()
+
+    # ---------- CRUD ----------
+    def on_add(self):
+        dlg = InvitadoDialog(parent=self)
+        if dlg.exec_() == QDialog.Accepted:
+            datos = dlg.datos()
+            if not datos["nombre"]:
+                QMessageBox.warning(self, "Validación", "El nombre es obligatorio.")
+                return
+            self.invitados.append(datos)
+            self.refrescar_tabla(self.ui.txtBuscar.text() if hasattr(self.ui, "txtBuscar") else "")
+
+    def on_edit(self):
+        fila = self._fila_seleccionada()
+        if fila < 0:
+            QMessageBox.information(self, "Editar", "Selecciona un invitado (clic en la fila).")
+            return
+        actual = self._datos_por_fila(fila)
+        dlg = InvitadoDialog(actual, self)
+        if dlg.exec_() == QDialog.Accepted:
+            self.invitados[fila] = dlg.datos()
+            self.refrescar_tabla(self.ui.txtBuscar.text() if hasattr(self.ui, "txtBuscar") else "")
+
+    def on_delete(self):
+        filas = self._filas_seleccionadas()
+        if not filas:
+            QMessageBox.information(self, "Eliminar", "Selecciona uno o varios invitados (clic en las filas).")
+            return
+        if QMessageBox.question(self, "Eliminar", f"¿Eliminar {len(filas)} invitado(s)?") != QMessageBox.Yes:
+            return
+        for f in sorted(filas, reverse=True):
+            del self.invitados[f]
+        self.refrescar_tabla(self.ui.txtBuscar.text() if hasattr(self.ui, "txtBuscar") else "")
+
+    def _datos_por_fila(self, fila: int):
+        d = {}
+        for c, k in enumerate(CAMPOS):
+            it = self.ui.tblInvitados.item(fila, c)
+            d[k] = it.text() if it else ""
+        return d
+
+    # ---------- CSV ----------
+    def _normaliza_headers(self, headers):
+        """Mapea cabeceras del CSV a claves internas."""
+        norm = []
+        for h in headers:
+            norm.append(CSV_MAP.get(h.strip().lower(), None))
+        return norm
+
+    def on_import_csv(self):
+        ruta, _ = QFileDialog.getOpenFileName(self, "Importar CSV", "", "CSV (*.csv)")
         if not ruta:
             return
         try:
-            with open(ruta, "r", encoding="utf-8-sig") as f:
-                reader = csv.DictReader(f)
+            with open(ruta, newline="", encoding="utf-8") as f:
+                reader = csv.reader(f)
+                rows = list(reader)
+            if not rows:
+                QMessageBox.warning(self, "Importación", "El CSV está vacío.")
+                return
 
-                # Mapeo laxo de cabeceras
-                mapa = {
-                    "nombre":   ["nombre", "name", "first_name"],
-                    "apellido": ["apellido", "apellidos", "surname", "last_name"],
-                    "pref_con": ["pref_con", "preferencias_con", "pref_estar", "with"],
-                    "rol":      ["rol", "role", "papel"],
-                    "pref_sin": ["pref_sin", "preferencias_sin", "pref_no_estar", "without"],
-                }
-                def take(row, clave):
-                    for alias in mapa[clave]:
-                        if alias in row and row[alias] is not None:
-                            return str(row[alias]).strip()
-                    return ""
+            headers = self._normaliza_headers(rows[0])
+            if any(h is None for h in headers):
+                raise ValueError("Cabeceras no reconocidas. Usa: nombre, apellido, (prefiere con), (prefiere sin), rol")
 
-                added = 0
-                for row in reader:
-                    nuevo = {
-                        "nombre":   take(row, "nombre"),
-                        "apellido": take(row, "apellido"),
-                        "pref_con": take(row, "pref_con"),
-                        "rol":      take(row, "rol"),
-                        "pref_sin": take(row, "pref_sin"),
-                    }
-                    if not nuevo["nombre"]:
-                        continue
-                    existe = any(
-                        it["nombre"].lower() == nuevo["nombre"].lower() and
-                        it["apellido"].lower() == nuevo["apellido"].lower()
-                        for it in self.participantes
-                    )
-                    if not existe:
-                        self.participantes.append(nuevo)
-                        added += 1
+            nuevos = []
+            for row in rows[1:]:
+                if not any(cell.strip() for cell in row):
+                    continue
+                inv = invitado_vacio()
+                for idx, key in enumerate(headers):
+                    if key and idx < len(row):
+                        inv[key] = row[idx].strip()
+                nuevos.append(inv)
 
-                self.guardar_a_json()
-                self.refrescar_tabla()
-                self.statusbar.showMessage(f"CSV importado: {added} nuevo(s)", 2500)
-
+            self.invitados.extend(nuevos)
+            self.refrescar_tabla(self.ui.txtBuscar.text() if hasattr(self.ui, "txtBuscar") else "")
+            QMessageBox.information(self, "Importación", f"Importados {len(nuevos)} invitados.")
         except Exception as e:
-            QMessageBox.critical(self, "Error CSV", f"No se pudo leer el CSV:\n{e}")
+            QMessageBox.critical(self, "Error CSV", str(e))
 
+    def on_export_csv(self):
+        if not self.invitados:
+            QMessageBox.information(self, "Exportar", "No hay datos para exportar.")
+            return
+        nombre = slug(f"invitados_{self.nombre_evento}") + ".csv"
+        ruta, _ = QFileDialog.getSaveFileName(self, "Exportar CSV", nombre, "CSV (*.csv)")
+        if not ruta:
+            return
+        try:
+            with open(ruta, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=CAMPOS)
+                writer.writeheader()
+                writer.writerows(self.invitados)
+            QMessageBox.information(self, "Exportación", "CSV guardado correctamente.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error CSV", str(e))
 
-# ------------------ Arranque ------------------
-if __name__ == "__main__":
-    import sys
-    app = QApplication(sys.argv)
-    win = MainWindow()
-    win.show()
-    sys.exit(app.exec_())
+    # ---------- Generar mesas (stub) ----------
+    def on_generar_mesas(self):
+        QMessageBox.information(
+            self, "Generar mesas",
+            "Aquí irá tu lógica de asignación de mesas.\nDe momento es un placeholder."
+        )
