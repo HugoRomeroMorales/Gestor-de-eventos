@@ -1,0 +1,147 @@
+
+QMainWindow, QWidget#centralwidget {
+  background: #86C7FF;                 /* azul claro del mockup */
+  font-family: "Segoe UI", "Inter", "Roboto", sans-serif;
+  font-size: 12pt;
+  color: #111;
+}
+
+/* ====== Cabecera (título + botones) ====== */
+QWidget#header {
+  background: transparent;
+  padding: 6px 0;
+}
+QLabel#lblTitulo {
+  font-size: 16pt;
+  font-weight: 700;
+  letter-spacing: .2px;
+  color: #0b1a33;
+}
+
+/* ====== Tarjeta blanca que envuelve la tabla ====== */
+QFrame#wrapTabla {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #e2e6ef;
+}
+
+/* Barra “Invitados >” */
+QWidget#barraSeccion {
+  background: transparent;
+}
+QLabel#lblSeccion {
+  color: #333;
+  font-weight: 600;
+}
+QToolButton#btnMenuTabla {
+  border: none;
+  background: #f1f2f6;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+QToolButton#btnMenuTabla:hover { background: #e7e9f1; }
+
+/* ====== Botones de acción (colores del mockup) ====== */
+QPushButton, QToolButton {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 700;
+}
+
+/* Amarillo: Subir CSV */
+QPushButton#btnSubirCSV { background: #FFD84D; color: #222; }
+QPushButton#btnSubirCSV:hover { background: #FFCF2E; }
+
+/* Morado: Generar mesas */
+QPushButton#btnGenerarMesas { background: #D24DFF; color: #ffffff; }
+QPushButton#btnGenerarMesas:hover { background: #C23AEE; }
+
+/* Verde: Añadir */
+QPushButton#btnAnadir { background: #22E55E; color: #ffffff; }
+QPushButton#btnAnadir:hover { background: #1FD85A; }
+
+/* Naranja: Editar */
+QPushButton#btnEditar { background: #FF8F24; color: #ffffff; }
+QPushButton#btnEditar:hover { background: #FF7E04; }
+
+/* Rojo: Eliminar */
+QPushButton#btnEliminar { background: #FF4B4B; color: #ffffff; }
+QPushButton#btnEliminar:hover { background: #F23B3B; }
+
+/* ====== Tabla (gris como en la maqueta) ====== */
+QTableWidget#tblInvitados {
+  background: #BEBEBE;                   /* gris de las filas */
+  border: 1px solid #CBCBCB;
+  border-radius: 6px;
+  gridline-color: #AFAFAF;
+  selection-background-color: #A6C7FF;   /* azul de selección suave */
+  selection-color: #0b1a33;
+  alternate-background-color: #B3B3B3;
+}
+QTableWidget#tblInvitados::item {
+  padding: 6px;
+}
+
+/* Cabecera de la tabla */
+QHeaderView::section {
+  background: #E7E7E7;                   /* cabecera gris claro */
+  color: #222;
+  border: none;
+  border-right: 1px solid #D6D6D6;
+  padding: 8px 10px;
+  font-weight: 600;
+}
+QHeaderView::section:last { border-right: none; }
+
+/* Ocultar el header vertical si estuviera visible */
+QTableView::corner { background: #E7E7E7; }
+
+/* ====== Barra de búsqueda inferior ====== */
+QWidget#buscarWrap {
+  background: transparent;
+  padding: 6px 0 0 0;
+}
+QLineEdit#txtBuscar {
+  background: #ffffff;
+  border: 2px solid #9CCBFF;             /* borde celeste */
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: #111;
+}
+QLineEdit#txtBuscar:focus {
+  border-color: #1A73E8;                 /* azul Google-like al foco */
+}
+
+/* Botón lupa redondito */
+QToolButton#btnBuscar {
+  background: #ffffff;
+  border: 2px solid #1A73E8;
+  color: #1A73E8;
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+QToolButton#btnBuscar:hover { background: #E8F0FE; }
+
+/* ====== Scrollbars discretos ====== */
+QScrollBar:vertical, QScrollBar:horizontal {
+  background: transparent;
+  border: none;
+}
+QScrollBar::handle:vertical, QScrollBar::handle:horizontal {
+  background: #C8D2E8;
+  border-radius: 6px;
+  min-height: 24px;
+  min-width: 24px;
+}
+QScrollBar::handle:hover { background: #B7C3E0; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; }
+
+/* ====== StatusBar ====== */
+QStatusBar {
+  background: #EAF2FF;
+  color: #0b1a33;
+  padding: 4px 8px;
+  border-top: 1px solid #D4E1FB;
+}
