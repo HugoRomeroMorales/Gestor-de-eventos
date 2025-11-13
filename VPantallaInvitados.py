@@ -4,15 +4,16 @@
 import os
 import csv
 import re
+from PyQt5.QtWidgets import QDialog
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QMainWindow, QFileDialog, QTableWidgetItem, QMessageBox, QMenu,
-    QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QComboBox,
     QToolButton
 )
 
 from Vistas.pantalla2_ui import Ui_MainWindow
+from WAnadirPersona import WAnadirPersona 
 
 # ------------------ Configuración ------------------
 CAMPOS = ["nombre", "apellido", "pref_con", "pref_sin"]
@@ -28,13 +29,16 @@ CSV_MAP = {
     "preferencias de con quién no estar": "pref_sin",
 }
 
+
 def invitado_vacio():
     return {k: "" for k in CAMPOS}
+
 
 def slug(texto: str) -> str:
     s = re.sub(r"[^\w\s-]", "", texto, flags=re.UNICODE)
     s = re.sub(r"\s+", "_", s.strip())
     return s.lower() or "archivo"
+
 
 def buscar_qss(nombre="styleInvitados.qss", desde_ruta=__file__, max_up=2):
     ruta = os.path.abspath(os.path.dirname(desde_ruta))
@@ -44,45 +48,6 @@ def buscar_qss(nombre="styleInvitados.qss", desde_ruta=__file__, max_up=2):
             return candidato
         ruta = os.path.abspath(os.path.join(ruta, ".."))
     return None
-
-
-# ------------------ Diálogo añadir/editar ------------------
-class InvitadoDialog(QDialog):
-    def __init__(self, invitado=None, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Invitado")
-        self.setModal(True)
-
-        self.edtNombre = QLineEdit()
-        self.edtApellido = QLineEdit()
-        self.cmbPrefCon = QComboBox(); self.cmbPrefCon.addItems(["", "A", "B", "C"])
-        self.cmbPrefSin = QComboBox(); self.cmbPrefSin.addItems(["", "X", "Y", "Z"])
-
-        form = QFormLayout(self)
-        form.addRow("Nombre:", self.edtNombre)
-        form.addRow("Apellido:", self.edtApellido)
-        form.addRow("Preferencias de con quién estar:", self.cmbPrefCon)
-        form.addRow("Preferencias de con quién no estar:", self.cmbPrefSin)
-
-        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        btns.accepted.connect(self.accept)
-        btns.rejected.connect(self.reject)
-        form.addRow(btns)
-
-        if invitado:
-            self.edtNombre.setText(invitado.get("nombre", ""))
-            self.edtApellido.setText(invitado.get("apellido", ""))
-            self.cmbPrefCon.setCurrentText(invitado.get("pref_con", ""))
-            self.cmbPrefSin.setCurrentText(invitado.get("pref_sin", ""))
-
-    def datos(self):
-        return {
-            "nombre": self.edtNombre.text().strip(),
-            "apellido": self.edtApellido.text().strip(),
-            "pref_con": self.cmbPrefCon.currentText(),
-            "pref_sin": self.cmbPrefSin.currentText(),
-        }
-
 
 
 # ------------------ Controlador ------------------
@@ -101,6 +66,7 @@ class VPantallaInvitados(QMainWindow):
             or "Nombre del Evento"
         )
 
+        # Lista interna de invitados (dicts con claves CAMPOS)
         self.invitados = []
 
         self._cargar_qss()
@@ -108,12 +74,11 @@ class VPantallaInvitados(QMainWindow):
         self._config_tabla()
         self._conectar_senales()
 
-        # Cargar CSV propio del evento
+        # Cargar CSV propio del evento (si existe)
         self._cargar_csv_evento()
 
         # Pintar tabla
         self.refrescar_tabla()
-
 
     # ---------- QSS ----------
     def _cargar_qss(self):
@@ -124,7 +89,6 @@ class VPantallaInvitados(QMainWindow):
                     self.setStyleSheet(f.read())
         except Exception as e:
             print(f"[QSS] Error: {e}")
-
 
     # ---------- Título y cabeceras ----------
     def _config_labels(self):
@@ -139,21 +103,24 @@ class VPantallaInvitados(QMainWindow):
     def _pintar_titulo(self):
         self.ui.lblTitulo.setText(f"LISTA DE PARTICIPANTES: [{self.nombre_evento}]")
 
-
     # ---------- Tabla ----------
     def _config_tabla(self):
         tbl = self.ui.tblInvitados
         tbl.setColumnCount(4)
-        tbl.setHorizontalHeaderLabels([
-            "Nombre", "Apellido", "Pref de estar", "Preferencias de con quién no estar"
-        ])
+        tbl.setHorizontalHeaderLabels(
+            [
+                "Nombre",
+                "Apellido",
+                "Pref de estar",
+                "Preferencias de con quien no estar",
+            ]
+        )
         tbl.horizontalHeader().setStretchLastSection(True)
         tbl.setSelectionBehavior(tbl.SelectRows)
         tbl.setSelectionMode(tbl.ExtendedSelection)
         tbl.setEditTriggers(tbl.NoEditTriggers)
         tbl.setAlternatingRowColors(True)
         tbl.doubleClicked.connect(self._on_double_click_editar)
-
 
     def refrescar_tabla(self, filtro=""):
         datos = self._filtrar(filtro)
@@ -175,10 +142,10 @@ class VPantallaInvitados(QMainWindow):
             return self.invitados
         f = texto.lower().strip()
         return [
-            d for d in self.invitados
+            d
+            for d in self.invitados
             if f in (d.get("nombre", "") + " " + d.get("apellido", "")).lower()
         ]
-
 
     # ---------- Selección ----------
     def _fila_seleccionada(self):
@@ -186,19 +153,24 @@ class VPantallaInvitados(QMainWindow):
         return idxs[0].row() if idxs else -1
 
     def _filas_seleccionadas(self):
-        return sorted([i.row() for i in self.ui.tblInvitados.selectionModel().selectedRows()])
-
-
+        return sorted(
+            [i.row() for i in self.ui.tblInvitados.selectionModel().selectedRows()]
+        )
 
     # ---------- Señales ----------
     def _conectar_senales(self):
         ui = self.ui
 
-        if hasattr(ui, "btnAnadir"): ui.btnAnadir.clicked.connect(self.on_add)
-        if hasattr(ui, "btnEditar"): ui.btnEditar.clicked.connect(self.on_edit)
-        if hasattr(ui, "btnEliminar"): ui.btnEliminar.clicked.connect(self.on_delete)
-        if hasattr(ui, "btnSubirCSV"): ui.btnSubirCSV.clicked.connect(self.on_import_csv)
-        if hasattr(ui, "btnGenerarMesas"): ui.btnGenerarMesas.clicked.connect(self.on_generar_mesas)
+        if hasattr(ui, "btnAnadir"):
+            ui.btnAnadir.clicked.connect(self.on_add)
+        if hasattr(ui, "btnEditar"):
+            ui.btnEditar.clicked.connect(self.on_edit)
+        if hasattr(ui, "btnEliminar"):
+            ui.btnEliminar.clicked.connect(self.on_delete)
+        if hasattr(ui, "btnSubirCSV"):
+            ui.btnSubirCSV.clicked.connect(self.on_import_csv)
+        if hasattr(ui, "btnGenerarMesas"):
+            ui.btnGenerarMesas.clicked.connect(self.on_generar_mesas)
 
         if hasattr(ui, "txtBuscar"):
             ui.txtBuscar.textChanged.connect(lambda t: self.refrescar_tabla(t))
@@ -223,7 +195,6 @@ class VPantallaInvitados(QMainWindow):
 
             ui.btnMenuTabla.setMenu(menu)
 
-
     # ---------- Menú tabla ----------
     def _invertir_seleccion(self):
         tbl = self.ui.tblInvitados
@@ -234,33 +205,36 @@ class VPantallaInvitados(QMainWindow):
             if r not in actuales:
                 tbl.selectRow(r)
 
-
     # ---------- CRUD ----------
     def _on_double_click_editar(self, *_):
         self.on_edit()
 
     def on_add(self):
-        dlg = InvitadoDialog(parent=self)
+        """Añadir invitado usando la ventana azul WAnadirPersona."""
+        dlg = WAnadirPersona(self)   # solo pasamos la ventana como parent
+
         if dlg.exec_() == QDialog.Accepted:
-            datos = dlg.datos()
-            if not datos["nombre"]:
+            datos = dlg.datos()  # dict con nombre, apellido, pref_con, pref_sin
+
+            if not datos.get("nombre"):
                 QMessageBox.warning(self, "Validación", "El nombre es obligatorio.")
                 return
+
+            # Añadimos a la lista interna y refrescamos la tabla
             self.invitados.append(datos)
             self.refrescar_tabla()
 
+
     def on_edit(self):
+        """Abrir ventana WAñadirPersona en modo EDICIÓN."""
         fila = self._fila_seleccionada()
         if fila < 0:
             QMessageBox.information(self, "Editar", "Selecciona un invitado.")
             return
 
-        actual = self._datos_por_fila(fila)
-        dlg = InvitadoDialog(actual, self)
-
-        if dlg.exec_() == QDialog.Accepted:
-            self.invitados[fila] = dlg.datos()
-            self.refrescar_tabla()
+        invitado = self.invitados[fila]
+        dlg = WAnadirPersona(self, invitado=invitado, indice=fila)
+        dlg.exec_()   # la ventana actualiza y refresca
 
     def on_delete(self):
         filas = self._filas_seleccionadas()
@@ -268,8 +242,12 @@ class VPantallaInvitados(QMainWindow):
             QMessageBox.information(self, "Eliminar", "Selecciona invitado(s).")
             return
 
-        if QMessageBox.question(self, "Eliminar",
-                                f"¿Eliminar {len(filas)} invitado(s)?") != QMessageBox.Yes:
+        if (
+            QMessageBox.question(
+                self, "Eliminar", f"¿Eliminar {len(filas)} invitado(s)?"
+            )
+            != QMessageBox.Yes
+        ):
             return
 
         for f in reversed(filas):
@@ -279,35 +257,32 @@ class VPantallaInvitados(QMainWindow):
 
     def _datos_por_fila(self, fila):
         return {
-            k: (self.ui.tblInvitados.item(fila, i).text()
-                if self.ui.tblInvitados.item(fila, i) else "")
+            k: (
+                self.ui.tblInvitados.item(fila, i).text()
+                if self.ui.tblInvitados.item(fila, i)
+                else ""
+            )
             for i, k in enumerate(CAMPOS)
         }
-
-
 
     # ---------- CSV ----------
     def _normaliza_headers(self, headers):
         """Mapea cabeceras del CSV a claves internas, limpiando BOM y símbolos extra."""
         norm = []
         for h in headers:
-            base = h.strip().lower()      # quitar espacios
-            base = base.lstrip("\ufeff")  # quitar BOM oculto (caso 'Nombre')
-            base = base.strip(" ;:,")     # quitar ;, : del final (caso '...no estar;;')
-
-            # 1) Si ya es una clave interna (nombre, apellido, pref_con, pref_sin), la usamos tal cual
+            base = h.strip().lower()
+            base = base.lstrip("\ufeff")
+            base = base.strip(" ;:,")
             if base in CAMPOS:
                 norm.append(base)
             else:
-                # 2) Si es una cabecera "bonita", la traducimos con CSV_MAP
                 norm.append(CSV_MAP.get(base, None))
-
         return norm
 
-
-
     def on_import_csv(self):
-        ruta, _ = QFileDialog.getOpenFileName(self, "Importar CSV", "", "CSV (*.csv)")
+        ruta, _ = QFileDialog.getOpenFileName(
+            self, "Importar CSV", "", "CSV (*.csv)"
+        )
         if not ruta:
             return
 
@@ -340,14 +315,17 @@ class VPantallaInvitados(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Error CSV", str(e))
 
-
     def on_export_csv(self):
         if not self.invitados:
-            QMessageBox.information(self, "Exportar", "No hay datos para exportar.")
+            QMessageBox.information(
+                self, "Exportar", "No hay datos para exportar."
+            )
             return
 
         nombre = slug(f"invitados_{self.nombre_evento}") + ".csv"
-        ruta, _ = QFileDialog.getSaveFileName(self, "Exportar CSV", nombre, "CSV (*.csv)")
+        ruta, _ = QFileDialog.getSaveFileName(
+            self, "Exportar CSV", nombre, "CSV (*.csv)"
+        )
         if not ruta:
             return
 
@@ -357,11 +335,11 @@ class VPantallaInvitados(QMainWindow):
                 writer.writeheader()
                 writer.writerows(self.invitados)
 
-            QMessageBox.information(self, "Exportado", "CSV guardado correctamente.")
+            QMessageBox.information(
+                self, "Exportado", "CSV guardado correctamente."
+            )
         except Exception as e:
             QMessageBox.critical(self, "Error CSV", str(e))
-
-
 
     # ---------- CSV Automático por evento ----------
     def _cargar_csv_evento(self):
@@ -387,7 +365,6 @@ class VPantallaInvitados(QMainWindow):
         except Exception as e:
             print(f"[CSV] Error al cargar CSV del evento: {e}")
 
-
     def _guardar_csv_evento(self):
         if not self.invitados:
             return
@@ -411,8 +388,6 @@ class VPantallaInvitados(QMainWindow):
         except Exception as e:
             print(f"[CSV] Error guardando: {e}")
 
-
-
     # ---------- Hook de cierre ----------
     def closeEvent(self, event):
         try:
@@ -421,8 +396,6 @@ class VPantallaInvitados(QMainWindow):
             print(f"[CLOSE] Error guardando CSV: {e}")
 
         super().closeEvent(event)
-
-
 
     # ---------- Mesas (placeholder) ----------
     def on_generar_mesas(self):

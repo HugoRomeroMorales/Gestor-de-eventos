@@ -27,32 +27,8 @@
     <property name="bottomMargin">
      <number>36</number>
     </property>
-    <item row="0" column="0">
-     <widget class="QLabel" name="lblTipo">
-      <property name="font">
-       <font>
-        <pointsize>14</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Nombre:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLineEdit" name="txtTipoEvento">
-      <property name="minimumSize">
-       <size>
-        <width>760</width>
-        <height>40</height>
-       </size>
-      </property>
-     </widget>
-    </item>
     <item row="5" column="0">
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="txtPrefCon">
       <property name="minimumSize">
        <size>
         <width>760</width>
@@ -61,8 +37,8 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="lblUbicacion">
+    <item row="2" column="0">
+     <widget class="QLabel" name="lblOrganizadores">
       <property name="font">
        <font>
         <pointsize>14</pointsize>
@@ -71,11 +47,24 @@
        </font>
       </property>
       <property name="text">
-       <string>Rol:</string>
+       <string>Apellidos:</string>
       </property>
      </widget>
     </item>
-    <item row="9" column="1">
+    <item row="8" column="2">
+     <widget class="QPushButton" name="btnCancelar">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>✖ Cancelar</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
      <widget class="QPushButton" name="btnAnadir">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -88,8 +77,18 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="lblHora">
+    <item row="3" column="0">
+     <widget class="QLineEdit" name="txtApellidos">
+      <property name="minimumSize">
+       <size>
+        <width>760</width>
+        <height>40</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="lblTipo">
       <property name="font">
        <font>
         <pointsize>14</pointsize>
@@ -98,7 +97,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Preferencias de con quien no estar:</string>
+       <string>Nombre:</string>
       </property>
      </widget>
     </item>
@@ -116,33 +115,27 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="0">
-     <layout class="QHBoxLayout" name="ubicacionYBotones" stretch="0">
-      <property name="spacing">
-       <number>12</number>
-      </property>
-      <item>
-       <widget class="QLineEdit" name="txtUbicacion">
-        <property name="minimumSize">
-         <size>
-          <width>760</width>
-          <height>40</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="9" column="2">
-     <widget class="QPushButton" name="btnCancelar">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+    <item row="6" column="0">
+     <widget class="QLabel" name="lblHora">
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
-       <string>✖ Cancelar</string>
+       <string>Preferencias de con quien no estar:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="txtNombre">
+      <property name="minimumSize">
+       <size>
+        <width>760</width>
+        <height>40</height>
+       </size>
       </property>
      </widget>
     </item>
@@ -159,32 +152,15 @@
       </property>
      </spacer>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="lblOrganizadores">
-      <property name="font">
-       <font>
-        <pointsize>14</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
+    <item row="8" column="0">
+     <layout class="QHBoxLayout" name="ubicacionYBotones" stretch="">
+      <property name="spacing">
+       <number>12</number>
       </property>
-      <property name="text">
-       <string>Apellidos:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLineEdit" name="txtOrganizadores">
-      <property name="minimumSize">
-       <size>
-        <width>760</width>
-        <height>40</height>
-       </size>
-      </property>
-     </widget>
+     </layout>
     </item>
     <item row="7" column="0">
-     <widget class="QLineEdit" name="lineEdit_2">
+     <widget class="QLineEdit" name="txtPrefSin">
       <property name="minimumSize">
        <size>
         <width>760</width>
@@ -201,7 +177,7 @@
      <x>0</x>
      <y>0</y>
      <width>1247</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

@@ -1,5 +1,4 @@
 nombre,apellido,pref_con,pref_sin
-Laura,Gómez,Ana Pérez; Marta Ruiz,Carlos López; Rubén Herrera
 Javier,Pérez,Laura Gómez; Sergio Martínez,Ana Ruiz; Carlos López
 Ana,Ruiz,Marta López; Laura Gómez,Javier Pérez; Rubén Herrera
 Carlos,López,Javier Pérez,Ana Ruiz; Marta Ruiz
@@ -19,3 +18,7 @@ Nerea,Ortega,Lucía Fernández,Elena Castro; Javier Pérez
 Hugo,Delgado,Elena Castro,Irene Vega; Claudia Suárez
 Irene,Vega,Claudia Suárez; Paula Ramírez,Hugo Delgado
 Diego,Marín,Ana Ruiz; Marta Ruiz,Carlos López
+Pedro,Carlos,,Caballero
+Ana,Alberti,Adriano,Carlos
+Ana,Jerez,David,Sergio
+Pedro,Galio,Javier,Marta
