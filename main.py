@@ -1,10 +1,21 @@
 # main.py
-import sys, json, os
+import sys
+import json
+import os
+
+# 🔥 DEBUG PARA VER ERRORES REALES DE QT
+os.environ["QT_DEBUG_PLUGINS"] = "1"
+os.environ["QT_LOGGING_RULES"] = "*.debug=true"
+
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from VPantallaPrincipal import VPantallaPrincipal
 from VPantallaInvitados import VPantallaInvitados
 
 RUTA_EVENTOS = "eventos.json"
+
+# 🔥 Aquí guardaremos la ventana de mesas para evitar que PyQt la destruya
+ventana_mesas_global = None
+
 
 def cargar_eventos():
     try:
@@ -16,49 +27,50 @@ def cargar_eventos():
         print("[JSON] Error cargando eventos:", e)
     return []
 
+
 class AppShim:
-    """Pequeño ‘router’ en memoria sin archivo extra."""
+    """Router simple que gestiona las ventanas."""
     def __init__(self):
         self.eventos = cargar_eventos()
-        self._ventanas = []  # evita GC de las ventanas secundarias
+        self._ventanas = []  # Mantiene vivas las ventanas secundarias
 
-    # ---- Persistencia requerida por WAnadirEvento ----
+    # ---- Guardar eventos ----
     def guardar_eventos(self):
         try:
-            os.makedirs(os.path.dirname(RUTA_EVENTOS) or ".", exist_ok=True)
             with open(RUTA_EVENTOS, "w", encoding="utf-8") as f:
                 json.dump(self.eventos, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print("[JSON] Error guardando eventos:", e)
 
-    # ---- Navegación que la principal espera ----
+    # ---- Abrir pantalla de invitados ----
     def abrir_pantalla2(self, evento):
-        # Pasamos el evento y el propio router a la ventana
         win = VPantallaInvitados(evento=evento, router=self)
-        nombre = evento.get("tipo") or evento.get("nombre") or "Evento"
 
+        nombre = evento.get("tipo") or evento.get("nombre") or "Evento"
         try:
-            win.set_evento(nombre)  # además se lo marcamos en la UI
+            win.set_evento(nombre)
         except AttributeError:
             win.setWindowTitle(nombre)
 
         win.show()
-        self._ventanas.append(win)
+        self._ventanas.append(win)  # evitar destrucción
 
-    # ---- (Opcional) Stubs de edición si los usas ----
     def dialog_anadir_evento(self):
-        # Ya no se usa: la principal abre WAnadirEvento directamente.
         pass
 
     def dialog_editar_evento(self, idx=None):
         QMessageBox.information(None, "Editar evento",
                                 f"Edición no implementada (idx={idx}).")
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyleSheet("")  # sin QSS global para evitar conflictos
+
+    # Sin QSS global para evitar conflictos
+    app.setStyleSheet("")
 
     shim = AppShim()
+
     win = VPantallaPrincipal(router=shim)
     win.show()
 

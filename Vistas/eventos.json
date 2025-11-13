@@ -1,0 +1,11 @@
+[
+  {
+    "tipo": "ff",
+    "fecha": "13/11/2025",
+    "hora": "22:09",
+    "ubicacion": "fff",
+    "organizadores": "ff",
+    "mesas": 13,
+    "csv_invitados": "C:\\Users\\aladr\\OneDrive - MSFT\\Escritorio\\Clases\\Desarrollo de interfaces\\Gestor-de-eventos\\Vistas\\invitados_ff.csv"
+  }
+]

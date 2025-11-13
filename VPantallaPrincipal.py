@@ -2,9 +2,8 @@
 from PyQt5.QtWidgets import QMainWindow, QListWidget, QMessageBox
 from PyQt5.QtCore import Qt
 from Vistas.pantalla_principal_ui import Ui_MainWindow as Ui_PantallaPrincipal
-from WAnadirEvento import WAnadirEvento          # Ventana de añadir
-from WEditarEvento import WEditarEvento          # <-- AÑADIMOS ESTA IMPORTACIÓN
-
+from WAnadirEvento import WAnadirEvento   
+from WEditarEvento import WEditarEvento        
 
 class VPantallaPrincipal(QMainWindow):
 
@@ -14,8 +13,8 @@ class VPantallaPrincipal(QMainWindow):
         self.ui.setupUi(self)
         self.router = router
 
-        self._dlg_add = None   # referencia a ventana "Añadir"
-        self._dlg_edit = None  # referencia a ventana "Editar"
+        self._dlg_add = None   
+        self._dlg_edit = None 
 
         # --- Conexiones de botones ---
         self.ui.btnAnadir.clicked.connect(self.on_add)
@@ -32,16 +31,17 @@ class VPantallaPrincipal(QMainWindow):
         self.refrescar_lista()
         self._update_buttons_state()
 
-        # Carga de QSS (si existe)
+        # Carga de QSS
         try:
             with open("stylePantallaPrin.qss", "r", encoding="utf-8") as f:
                 self.setStyleSheet(f.read())
         except FileNotFoundError:
             pass
 
-    # ------------------ RENDER / SELECCIÓN ------------------
+    # ------------------ SELECCIÓN ------------------
 
     def refrescar_lista(self):
+        # Rellena el QListWidget con los eventos
         lista: QListWidget = self.ui.lstEventos
         lista.clear()
         for ev in self.router.eventos:
@@ -51,18 +51,21 @@ class VPantallaPrincipal(QMainWindow):
                 f"{ev.get('ubicacion', '(sin ubicación)')}"
             )
             lista.addItem(texto)
-        self._update_buttons_state()
+        self._update_buttons_state() # Tras refrescar, actualizamos el estado de los botones
 
     def get_selected_index(self) -> int:
+        # Devuelve el índice del evento seleccionado en la lista
+        # o -1 si no hay ninguno válido
         fila = self.ui.lstEventos.currentRow()
         return fila if 0 <= fila < len(self.router.eventos) else -1
 
     def _update_buttons_state(self):
+        # Habilita o deshabilita los botones Editar/Eliminar según haya selección
         has_sel = self.get_selected_index() != -1
         self.ui.btnEditar.setEnabled(has_sel)
         self.ui.btnEliminar.setEnabled(has_sel)
 
-    # ------------------ ACCIONES CRUD ------------------
+    # ------------------ CRUD ------------------
 
     def on_add(self):
         # Abre la ventana emergente real de "Añadir evento"
@@ -91,8 +94,8 @@ class VPantallaPrincipal(QMainWindow):
         if QMessageBox.question(
             self, "Confirmar eliminación",
             "¿Seguro que quieres eliminar este evento?",
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-        ) == QMessageBox.Yes:
+            QMessageBox.Si | QMessageBox.No, QMessageBox.No
+        ) == QMessageBox.Si:
             del self.router.eventos[idx]
             # Persistir tras borrar
             if hasattr(self.router, "guardar_eventos"):
@@ -102,6 +105,7 @@ class VPantallaPrincipal(QMainWindow):
     # ------------------ NAVEGACIÓN ------------------
 
     def on_open_selected(self):
+        # Abrir la Pantalla2 (invitados) para el evento seleccionado
         idx = self.get_selected_index()
         if idx == -1:
             return
