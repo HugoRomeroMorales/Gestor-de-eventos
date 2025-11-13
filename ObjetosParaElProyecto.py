@@ -25,6 +25,20 @@ class Evento:
     ubicacion: str
     mesas: List[Mesa] = field(default_factory=list)
 
+
+# --- Compatibilidad: pequeño modelo usado en `modelos.py` ---
+@dataclass
+class EventoSimple:
+    """Versión reducida del Evento (tipo/fecha/hora/ubicacion),
+    mantenida para compatibilidad con el antiguo `modelos.py`.
+    """
+    tipo: str
+    fecha: str      # "dd/MM/yyyy"
+    hora: str       # "HH:mm"
+    ubicacion: str
+    organizadores: str = ""
+    mesas: int = 1
+
 def importar_invitados_csv(ruta_csv: str, delimitador: str = ";") -> List[Invitado]:
   
     invitados: List[Invitado] = []

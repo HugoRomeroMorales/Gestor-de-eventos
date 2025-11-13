@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
         self.tblInvitados.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.tblInvitados.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.tblInvitados.setRowCount(0)
-        self.tblInvitados.setColumnCount(5)
+        self.tblInvitados.setColumnCount(4)
         self.tblInvitados.setObjectName("tblInvitados")
         item = QtWidgets.QTableWidgetItem()
         self.tblInvitados.setHorizontalHeaderItem(0, item)
@@ -91,8 +91,6 @@ class Ui_MainWindow(object):
         self.tblInvitados.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
         self.tblInvitados.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tblInvitados.setHorizontalHeaderItem(4, item)
         self.tblInvitados.horizontalHeader().setVisible(True)
         self.tblInvitados.horizontalHeader().setCascadingSectionResizes(True)
         self.tblInvitados.horizontalHeader().setDefaultSectionSize(125)
@@ -152,9 +150,17 @@ class Ui_MainWindow(object):
         item = self.tblInvitados.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Pref de estar"))
         item = self.tblInvitados.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Rol"))
-        item = self.tblInvitados.horizontalHeaderItem(4)
         item.setText(_translate("MainWindow", "Prefetencias de con quien no estar"))
         self.txtBuscar.setPlaceholderText(_translate("MainWindow", "Buscar por nombre de invitado"))
         self.btnBuscar.setToolTip(_translate("MainWindow", "Buscar"))
         self.btnBuscar.setText(_translate("MainWindow", "🔍"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

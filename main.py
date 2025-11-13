@@ -33,12 +33,15 @@ class AppShim:
 
     # ---- Navegación que la principal espera ----
     def abrir_pantalla2(self, evento):
-        win = VPantallaInvitados()
+        # Pasamos el evento y el propio router a la ventana
+        win = VPantallaInvitados(evento=evento, router=self)
         nombre = evento.get("tipo") or evento.get("nombre") or "Evento"
+
         try:
-            win.set_evento(nombre)  # si tu clase lo tiene
+            win.set_evento(nombre)  # además se lo marcamos en la UI
         except AttributeError:
             win.setWindowTitle(nombre)
+
         win.show()
         self._ventanas.append(win)
 

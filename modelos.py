@@ -1,10 +1,7 @@
-from dataclasses import dataclass
+"""Compatibilidad: reexporta el pequeño modelo desde
+`ObjetosParaElProyecto.py` para mantener las importaciones
+existentes que usan `modelos.Evento`.
+"""
+from ObjetosParaElProyecto import EventoSimple as Evento
 
-@dataclass
-class Evento:
-    tipo: str
-    fecha: str      # "dd/MM/yyyy"
-    hora: str       # "HH:mm"
-    ubicacion: str
-    organizadores: str = ""  # NUEVO
-    mesas: int = 1           # NUEVO
+__all__ = ["Evento"]

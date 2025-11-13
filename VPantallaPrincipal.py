@@ -1,8 +1,10 @@
 # VPantallaPrincipal.py
 from PyQt5.QtWidgets import QMainWindow, QListWidget, QMessageBox
-from PyQt5.QtCore import Qt   
+from PyQt5.QtCore import Qt
 from Vistas.pantalla_principal_ui import Ui_MainWindow as Ui_PantallaPrincipal
-from WAnadirEvento import WAnadirEvento   # <--- IMPORTANTE
+from WAnadirEvento import WAnadirEvento          # Ventana de añadir
+from WEditarEvento import WEditarEvento          # <-- AÑADIMOS ESTA IMPORTACIÓN
+
 
 class VPantallaPrincipal(QMainWindow):
 
@@ -11,7 +13,9 @@ class VPantallaPrincipal(QMainWindow):
         self.ui = Ui_PantallaPrincipal()
         self.ui.setupUi(self)
         self.router = router
-        self._dlg_add = None  # mantener referencia
+
+        self._dlg_add = None   # referencia a ventana "Añadir"
+        self._dlg_edit = None  # referencia a ventana "Editar"
 
         # --- Conexiones de botones ---
         self.ui.btnAnadir.clicked.connect(self.on_add)
@@ -41,7 +45,11 @@ class VPantallaPrincipal(QMainWindow):
         lista: QListWidget = self.ui.lstEventos
         lista.clear()
         for ev in self.router.eventos:
-            texto = f"{ev.get('tipo','(sin tipo)')} — {ev.get('fecha','??/??/????')} {ev.get('hora','--:--')} — {ev.get('ubicacion','(sin ubicación)')}"
+            texto = (
+                f"{ev.get('tipo', '(sin tipo)')} — "
+                f"{ev.get('fecha', '??/??/????')} {ev.get('hora', '--:--')} — "
+                f"{ev.get('ubicacion', '(sin ubicación)')}"
+            )
             lista.addItem(texto)
         self._update_buttons_state()
 
@@ -57,7 +65,7 @@ class VPantallaPrincipal(QMainWindow):
     # ------------------ ACCIONES CRUD ------------------
 
     def on_add(self):
-        # Abre la ventana emergente real
+        # Abre la ventana emergente real de "Añadir evento"
         self._dlg_add = WAnadirEvento(parent=self)
         self._dlg_add.setAttribute(Qt.WA_DeleteOnClose, True)
         self._dlg_add.show()
@@ -67,11 +75,13 @@ class VPantallaPrincipal(QMainWindow):
         if idx == -1:
             QMessageBox.information(self, "Editar", "Selecciona un evento para editarlo.")
             return
-        try:
-            self.router.dialog_editar_evento(idx)
-        except AttributeError:
-            QMessageBox.information(self, "Editar", "Edición no implementada.")
-        self.refrescar_lista()
+
+        # Abrimos directamente la ventana de edición
+        self._dlg_edit = WEditarEvento(parent=self, idx=idx)
+        self._dlg_edit.setAttribute(Qt.WA_DeleteOnClose, True)
+        self._dlg_edit.show()
+        # No hace falta llamar a refrescar_lista aquí, ya lo hace WEditarEvento
+        # cuando guardas los cambios.
 
     def on_delete(self):
         idx = self.get_selected_index()
