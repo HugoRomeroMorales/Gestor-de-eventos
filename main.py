@@ -3,17 +3,12 @@ import sys
 import json
 import os
 
-# 🔥 DEBUG PARA VER ERRORES REALES DE QT
-os.environ["QT_DEBUG_PLUGINS"] = "1"
-os.environ["QT_LOGGING_RULES"] = "*.debug=true"
-
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from VPantallaPrincipal import VPantallaPrincipal
 from VPantallaInvitados import VPantallaInvitados
 
 RUTA_EVENTOS = "eventos.json"
 
-# 🔥 Aquí guardaremos la ventana de mesas para evitar que PyQt la destruya
 ventana_mesas_global = None
 
 

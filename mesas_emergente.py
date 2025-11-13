@@ -40,7 +40,7 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
         self.btnAutomatico.clicked.connect(self.on_generar_mesas_auto)
         self.btnManual.clicked.connect(self.on_generar_mesas_manual)
 
-        print("[DEBUG] EmergenteMesas iniciada.")
+        
 
     # -------------------------------------------------------------------
     # Convertir CSV → Lista de objetos Invitado (con amigos/enemigos)
@@ -83,32 +83,28 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
                 )
             )
 
-        print(f"[DEBUG] Invitados convertidos: {[p.nombre for p in participantes]}")
+       
         return participantes
 
-    # -------------------------------------------------------------------
-    # AUTOMÁTICO → Ejecutar ORTOOLS + abrir ventana mesas
-    # -------------------------------------------------------------------
     def on_generar_mesas_auto(self):
-        print("[DEBUG] BOTÓN AUTOMÁTICO pulsado")
-
+    
         try:
-            import main  # para acceder a ventana_mesas_global
-            print("[DEBUG] Import main correcto")
+            import main 
+       
 
-            # Importamos la clase Main SOLO AQUÍ
+            # Importamos la clase Main
             from ui_mesa import Main
-            print("[DEBUG] Import Main desde ui_mesa correcto")
+            
 
             participantes = self._invitados_csv_a_modelo()
-            print(f"[DEBUG] Total participantes: {len(participantes)}")
+        
 
             if not participantes:
                 QMessageBox.warning(self, "Mesas", "No hay invitados para asignar.")
                 return
 
             tamano = self.tamano_mesa_defecto
-            print("[DEBUG] Ejecutando ORTOOLS…")
+        
 
             # Ejecutar solver
             evento, mapping = asignar_mesas(
@@ -119,29 +115,24 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
                 ubicacion=self.evento_dict.get("ubicacion", "")
             )
 
-            print("[DEBUG] ORTOOLS ha devuelto un evento con "
-                  f"{len(evento.mesas)} mesas")
 
             # Mantener viva la ventana para que no se destruya
             main.ventana_mesas_global = Main(evento, self.invitados_csv)
             main.ventana_mesas_global.show()
 
-            print("[DEBUG] Ventana de mesas abierta correctamente")
+            
 
             # Cerramos emergente
             self.hide()
 
         except Exception as e:
-            print("[DEBUG] ERROR en automático:", e)
+    
             QMessageBox.critical(
                 self,
                 "Error",
                 f"Error generando mesas automáticas:\n\n{e}"
             )
 
-    # -------------------------------------------------------------------
-    # MANUAL → Crear mesas sin invitados
-    # -------------------------------------------------------------------
     def _crear_evento_vacio(self, tamano_mesa: int) -> Evento:
         total = len(self.invitados_csv)
         num_mesas = max(1, math.ceil(total / tamano_mesa))
@@ -157,7 +148,6 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
         return crear_evento(nombre, fecha, ubic, mesas)
 
     def on_generar_mesas_manual(self):
-        print("[DEBUG] BOTÓN MANUAL pulsado")
 
         try:
             import main
@@ -171,12 +161,9 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
             main.ventana_mesas_global = Main(evento, self.invitados_csv)
             main.ventana_mesas_global.show()
 
-            print("[DEBUG] Ventana manual abierta correctamente")
-
             self.hide()
 
         except Exception as e:
-            print("[DEBUG] ERROR en manual:", e)
             QMessageBox.critical(
                 self,
                 "Error",
