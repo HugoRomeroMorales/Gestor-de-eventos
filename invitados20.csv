@@ -1,0 +1,21 @@
+nombre,apellido,pref_con,pref_sin
+Lucía,García,Carmen López,Pedro Ruiz
+Marcos,López,Juan Pérez,Ana Torres
+Elena,Pérez,Laura Martín,Carlos Gómez
+Javier,Gómez,Marcos López,Lucía García
+Sara,Ruiz,Ana Torres,Diego Navarro
+Pablo,Martín,Elena Pérez,Sofía Herrera
+Ana,Torres,Sara Ruiz,Javier Gómez
+Diego,Navarro,Pablo Martín,Carmen López
+Laura,Morales,Sofía Herrera,Marcos López
+Carmen,López,Lucía García,Diego Navarro
+Rubén,Herrera,Javier Gómez,Laura Martín
+Sofía,Herrera,Ana Torres,Pablo Martín
+Mario,Serrano,Sara Ruiz,Elena Pérez
+Julia,Castro,Laura Morales,Juan Pérez
+Iván,Romero,Rubén Herrera,Sofía Herrera
+Natalia,Santos,Julia Castro,Mario Serrano
+Clara,Vidal,Natalia Santos,Iván Romero
+Hugo,Molina,Clara Vidal,Carmen López
+Irene,Navarro,Lucía García,Pablo Martín
+Adrián,Campos,Hugo Molina,Diego Navarro

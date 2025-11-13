@@ -1,0 +1,21 @@
+nombre,apellido,pref_con,pref_sin
+Alberto,Santos,Marta López,Daniel Torres
+Marta,López,Alberto Santos,Paula Gil
+Raúl,Martínez,Clara Núñez,Sergio Vidal
+Patricia,Gil,Raúl Martínez,Óscar Hernández
+Óscar,Hernández,Patricia Gil,Marta López
+Daniel,Torres,Lucía Torres,Elena Rubio
+Clara,Núñez,Paula Gil,Alberto Santos
+Paula,Gil,Clara Núñez,Diego Ramos
+Sergio,Vidal,Marta López,Elena Rubio
+Elena,Rubio,Sergio Vidal,Óscar Hernández
+Diego,Ramos,Patricia Gil,Clara Núñez
+Laura,Benítez,Alberto Santos,Marta López
+Roberto,Paredes,Raúl Martínez,Paula Gil
+Nerea,Ortiz,Sergio Vidal,Diego Ramos
+Jorge,Flores,Patricia Gil,Laura Benítez
+Celia,Serrano,Daniel Torres,Roberto Paredes
+Tomás,Delgado,Celia Serrano,Nerea Ortiz
+Lucía,Torres,Elena Rubio,Sergio Vidal
+Andrea,Navarro,Marta López,Clara Núñez
+Iván,Reyes,Patricia Gil,Óscar Hernández
