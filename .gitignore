@@ -1,0 +1,35 @@
+# =============================
+# Ignorar entorno virtual Python
+# =============================
+venv/
+.venv/
+env/
+ENV/
+**/venv/
+**/.venv/
+**/env/
+**/ENV/
+
+# =============================
+# Ignorar cachés de Python
+# =============================
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# =============================
+# Ignorar configuración local
+# =============================
+.vscode/
+.idea/
+*.log
+*.sqlite
+*.db
+
+# =============================
+# Ignorar archivos de sistema
+# =============================
+.DS_Store
+Thumbs.db

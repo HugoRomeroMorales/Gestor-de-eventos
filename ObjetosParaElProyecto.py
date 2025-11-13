@@ -1,0 +1,154 @@
+from dataclasses import dataclass, field
+from typing import List, Optional, Dict
+import csv
+
+
+@dataclass
+class Invitado:
+    rol: str
+    nombre: str
+    apellido: str
+    amistades: List[str] = field(default_factory=list)
+    enemistades: List[str] = field(default_factory=list)
+
+@dataclass
+class Mesa:
+    mesa_id: int
+    numAsientos: int
+    nombMesa: Optional[str] = None
+    invitados: List[Invitado] = field(default_factory=list)
+
+@dataclass
+class Evento:
+    nombre: str
+    fecha: str
+    ubicacion: str
+    mesas: List[Mesa] = field(default_factory=list)
+
+def importar_invitados_csv(ruta_csv: str, delimitador: str = ";") -> List[Invitado]:
+  
+    invitados: List[Invitado] = []
+
+    with open(ruta_csv, "r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f, delimiter=delimitador)
+        for fila in reader:
+            # leer columnas y limpiar espacios
+            nombre = fila.get("nombre", "").strip()
+            apellido = fila.get("apellido", "").strip()
+            rol = fila.get("rol", "").strip()
+            prefs_raw = fila.get("preferencias", "").strip()
+
+            # convertir "pref1|pref2" -> ["pref1", "pref2"]
+            preferencias = [p.strip() for p in prefs_raw.split("|") if p.strip()]
+
+            invitado = Invitado(
+                rol=rol,
+                nombre=nombre,
+                apellido=apellido,
+                preferencias=preferencias
+            )
+            invitados.append(invitado)
+
+    return invitados
+
+def exportar_evento_csv(evento: Evento, ruta="evento.csv", delim=";"):
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["nombre", "fecha", "ubicacion"])
+        w.writerow([evento.nombre, evento.fecha, evento.ubicacion])
+
+def exportar_mesas_csv(evento: Evento, ruta="mesas.csv", delim=";"):
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["mesa_id", "mesa_nombre", "num_asientos"])
+        for m in evento.mesas:
+            etiqueta = m.nombMesa if m.nombMesa else f"Mesa{m.mesa_id}"
+            w.writerow([m.mesa_id, etiqueta, m.numAsientos])
+
+def exportar_invitados_no_asignados_csv(no_asignados: List[Invitado], ruta="invitados_no_asignados.csv", delim=";"):
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["nombre", "apellido", "rol", "preferencias"])
+        for inv in no_asignados:
+            w.writerow([inv.nombre, inv.apellido, inv.rol, "|".join(inv.preferencias)])
+
+def exportar_invitados_csv(evento: Evento, ruta="invitados.csv", delim=";"):
+
+    with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=delim)
+        w.writerow(["mesa_id", "mesa_nombre", "nombre", "apellido", "rol", "preferencias"])
+        for m in evento.mesas:
+            etiqueta = m.nombMesa if m.nombMesa else f"Mesa{m.mesa_id}"
+            for inv in m.invitados:
+                w.writerow([m.mesa_id, etiqueta, inv.nombre, inv.apellido, inv.rol, "|".join(inv.preferencias)])
+
+def exportar_todo_csv(evento: Evento, no_asignados: List[Invitado], base="evento", delim=";"):
+    exportar_evento_csv(evento, f"{base}_evento.csv", delim)
+    exportar_mesas_csv(evento, f"{base}_mesas.csv", delim)
+    exportar_invitados_no_asignados_csv(no_asignados, f"{base}_invitados_no_asignados.csv", delim)
+    exportar_invitados_csv(evento, f"{base}_invitados.csv", delim)
+
+
+import math
+from PyQt5 import QtWidgets, QtGui, QtCore
+
+ICON_SIZE = 56
+MARGIN = 24
+
+def clear_arena(arena: QtWidgets.QWidget):
+    for w in arena.findChildren(QtWidgets.QWidget):
+        w.deleteLater()
+
+def render_mesa(ui, invitados, capacidad, mostrar_huecos=True):
+    arena = ui.arena
+    clear_arena(arena)
+
+    if hasattr(ui, "lblAsientos"):
+        ui.lblAsientos.setText(f"Asientos: {len(invitados)}/{capacidad}")
+
+    arena_w, arena_h = arena.width(), arena.height()
+    cx, cy = arena_w // 2, arena_h // 2
+
+    r = min(arena_w, arena_h) // 2 - MARGIN - ICON_SIZE // 2
+    if r < 40:  
+        r = 40
+
+    if mostrar_huecos:
+        n_slots = max(capacidad, 1)
+    else:
+        n_slots = max(len(invitados), 1)
+
+    start = -math.pi / 2
+    step = 2 * math.pi / n_slots
+
+    data = list(invitados)
+    if mostrar_huecos and len(data) < capacidad:
+        data = data + [{"nombre": "", "icon": "Resources/Icons/Gris.png"}] * (capacidad - len(data))
+
+    for i in range(n_slots):
+        info = data[i] if i < len(data) else None
+
+        ang = start + i * step
+        x = cx + r * math.cos(ang)
+        y = cy + r * math.sin(ang)
+
+        icon = QtWidgets.QLabel(arena)
+        icon.setMinimumSize(ICON_SIZE, ICON_SIZE)
+        icon.setMaximumSize(ICON_SIZE, ICON_SIZE)
+        icon.setScaledContents(True)
+        icon.setAlignment(QtCore.Qt.AlignCenter)
+        icon.setStyleSheet("QLabel{background:transparent;}")
+        if info and info.get("icon"):
+            icon.setPixmap(QtGui.QPixmap(info["icon"]))
+        icon.move(int(x - ICON_SIZE/2), int(y - ICON_SIZE/2))
+        icon.show()
+
+        nombre = (info.get("nombre") or "").strip() if info else ""
+        if nombre:
+            lbl = QtWidgets.QLabel(arena)
+            lbl.setText(nombre)
+            lbl.adjustSize()
+            lbl.setAlignment(QtCore.Qt.AlignCenter)
+            lbl.move(int(x - lbl.width()/2), int(y + ICON_SIZE/2 + 4))
+            lbl.show()
+
