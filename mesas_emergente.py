@@ -1,14 +1,10 @@
-# mesas_emergente.py
-
 from typing import List, Dict, Optional
 import math
-
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 from PyQt5 import QtCore
 
 from Vistas.Emergente_mesas_ui import Ui_EmergenteMesas
 
-# --- Importamos de tu algoritmo real ---
 from algoritmo import (
     Invitado,
     Mesa,
@@ -16,7 +12,8 @@ from algoritmo import (
     crear_invitado,
     crear_mesa,
     crear_evento,
-    asignar_mesas
+    asignar_mesas,
+    Main,
 )
 
 
@@ -30,21 +27,13 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
     ):
         super().__init__(parent)
         self.setupUi(self)
-
-        # Datos recibidos
         self.invitados_csv = invitados_csv or []
         self.evento_dict = evento_dict or {}
         self.tamano_mesa_defecto = tamano_mesa_defecto
 
-        # Botones
         self.btnAutomatico.clicked.connect(self.on_generar_mesas_auto)
         self.btnManual.clicked.connect(self.on_generar_mesas_manual)
 
-        
-
-    # -------------------------------------------------------------------
-    # Convertir CSV → Lista de objetos Invitado (con amigos/enemigos)
-    # -------------------------------------------------------------------
     def _invitados_csv_a_modelo(self) -> List[Invitado]:
         participantes: List[Invitado] = []
 
@@ -57,8 +46,6 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
                 continue
 
             prefs = []
-
-            # Amigos
             pref_con = (d.get("pref_con") or "").strip()
             if pref_con:
                 for amigo in pref_con.split("|"):
@@ -66,7 +53,6 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
                     if amigo:
                         prefs.append(f"amigo:{amigo}")
 
-            # Enemigos
             pref_sin = (d.get("pref_sin") or "").strip()
             if pref_sin:
                 for enemigo in pref_sin.split("|"):
@@ -83,30 +69,19 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
                 )
             )
 
-       
         return participantes
 
     def on_generar_mesas_auto(self):
-    
         try:
-            import main 
-       
-
-            # Importamos la clase Main
-            from ui_mesa import Main
-            
-
+            import main
             participantes = self._invitados_csv_a_modelo()
-        
 
             if not participantes:
                 QMessageBox.warning(self, "Mesas", "No hay invitados para asignar.")
                 return
 
             tamano = self.tamano_mesa_defecto
-        
 
-            # Ejecutar solver
             evento, mapping = asignar_mesas(
                 participantes,
                 tamano_mesa=tamano,
@@ -115,18 +90,12 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
                 ubicacion=self.evento_dict.get("ubicacion", "")
             )
 
-
-            # Mantener viva la ventana para que no se destruya
             main.ventana_mesas_global = Main(evento, self.invitados_csv)
             main.ventana_mesas_global.show()
 
-            
-
-            # Cerramos emergente
             self.hide()
 
         except Exception as e:
-    
             QMessageBox.critical(
                 self,
                 "Error",
@@ -148,16 +117,11 @@ class EmergenteMesas(QMainWindow, Ui_EmergenteMesas):
         return crear_evento(nombre, fecha, ubic, mesas)
 
     def on_generar_mesas_manual(self):
-
         try:
             import main
-            from ui_mesa import Main
-
             tamano = self.tamano_mesa_defecto
-
             evento = self._crear_evento_vacio(tamano)
 
-            # Guardamos ventana para que PyQt no la destruya
             main.ventana_mesas_global = Main(evento, self.invitados_csv)
             main.ventana_mesas_global.show()
 
