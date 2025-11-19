@@ -34,7 +34,7 @@ class VPantallaPrincipal(QMainWindow):
         self._update_buttons_state()
 
         # -------------------------
-        # 🔥 CARGA DE QSS ROBUSTA
+        #CARGA DE QSS ROBUSTA
         # -------------------------
         ruta_qss = os.path.join(os.path.dirname(__file__), "stylePantallaPrin.qss")
 
@@ -94,14 +94,17 @@ class VPantallaPrincipal(QMainWindow):
             return
 
         if QMessageBox.question(
-            self, "Confirmar eliminación",
+            self,
+            "Confirmar eliminación",
             "¿Seguro que quieres eliminar este evento?",
-            QMessageBox.Si | QMessageBox.No, QMessageBox.No
-        ) == QMessageBox.Si:
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        ) == QMessageBox.Yes:
             del self.router.eventos[idx]
             if hasattr(self.router, "guardar_eventos"):
                 self.router.guardar_eventos()
             self.refrescar_lista()
+
 
     # ------------------ NAVEGACIÓN ------------------
 

@@ -1,9 +1,12 @@
-import sys, math, json
+import sys, math, json, os
 from typing import List, Optional, Dict
+from math import ceil
+
 from ortools.sat.python import cp_model
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 import ui_mesa
+import csv
 
 ICON_SIZE = 56
 MARGIN = 24
@@ -50,6 +53,57 @@ def crear_evento(nombre: str, fecha: str, ubicacion: str, mesas: Optional[List[M
     return Evento(nombre, fecha, ubicacion, mesas)
 
 
+def cargar_evento_desde_csv_mesas(nombre_evento: str, fecha: str, ubicacion: str,
+                                  ruta: str) -> Evento:
+    mesas_raw: Dict[int, Dict] = {}
+
+    with open(ruta, newline="", encoding="utf-8-sig") as f:
+        reader = csv.reader(f, delimiter=";")
+        headers = next(reader, None)
+
+        for row in reader:
+            if not row or len(row) < 3:
+                continue
+
+            mesa_id = int(row[0])
+            mesa_nombre = row[1]
+            asiento = int(row[2])
+
+            nombre = row[3] if len(row) > 3 else ""
+            apellido = row[4] if len(row) > 4 else ""
+            rol = row[5] if len(row) > 5 else "invitado"
+
+            data = mesas_raw.setdefault(mesa_id, {
+                "nombre": mesa_nombre,
+                "capacidad": 0,
+                "invitados": {}
+            })
+
+            if asiento > data["capacidad"]:
+                data["capacidad"] = asiento
+
+            if nombre.strip():
+                data["invitados"][asiento] = crear_invitado(
+                    rol=rol.strip() or "invitado",
+                    nombre=nombre.strip(),
+                    apellido=apellido.strip(),
+                    preferencias=[]
+                )
+
+    mesas: List[Mesa] = []
+    for mid in sorted(mesas_raw.keys()):
+        info = mesas_raw[mid]
+        cap = max(8, info["capacidad"])
+        invitados: List[Optional[Invitado]] = [None] * cap
+        for asiento, inv in info["invitados"].items():
+            idx = asiento - 1
+            if 0 <= idx < cap:
+                invitados[idx] = inv
+        mesas.append(crear_mesa(mid, cap, info["nombre"], invitados))
+
+    return crear_evento(nombre_evento, fecha, ubicacion, mesas)
+
+
 def _split_pref(pref: str):
     p = (pref or "").strip()
     lower = p.lower()
@@ -91,27 +145,38 @@ def calcular_estados_conflicto(mesa: Mesa) -> List[str]:
 
 
 def asignar_mesas(participantes: List[Invitado], tamano_mesa: int,
-                  nombre_evento: str = "Evento", fecha: str = "", ubicacion: str = ""):
+                  nombre_evento: str = "Evento", fecha: str = "", ubicacion: str = "",
+                  num_mesas: Optional[int] = None):
+
     nombres = [i.nombre for i in participantes]
     n = len(participantes)
-    num_mesas = max(1, math.ceil(n / tamano_mesa))
+
+    if num_mesas is None or num_mesas <= 0:
+        num_mesas = max(1, ceil(n / tamano_mesa))
+
+    tamano_mesa = max(8, tamano_mesa)
+
     model = cp_model.CpModel()
-    mesa_var: Dict[str, cp_model.IntVar] = {nom: model.NewIntVar(0, num_mesas - 1, nom) for nom in nombres}
+    mesa_var = {nom: model.NewIntVar(0, num_mesas - 1, nom) for nom in nombres}
     nombre_set = set(nombres)
+
     for inv in participantes:
-        amigos, enemigos = [], []
+        amigos = []
+        enemigos = []
         for pref in inv.preferencias or []:
             t, who = _split_pref(pref)
-            if t == "amigo" and who:
+            if who not in nombre_set:
+                continue
+            if t == "amigo":
                 amigos.append(who)
-            elif t == "enemigo" and who:
+            elif t == "enemigo":
                 enemigos.append(who)
+
         for a in amigos:
-            if a in nombre_set:
-                model.Add(mesa_var[inv.nombre] == mesa_var[a])
+            model.Add(mesa_var[inv.nombre] == mesa_var[a])
         for e in enemigos:
-            if e in nombre_set:
-                model.Add(mesa_var[inv.nombre] != mesa_var[e])
+            pass
+
     for m in range(num_mesas):
         indicadores = []
         for nom in nombres:
@@ -120,20 +185,32 @@ def asignar_mesas(participantes: List[Invitado], tamano_mesa: int,
             model.Add(mesa_var[nom] != m).OnlyEnforceIf(b.Not())
             indicadores.append(b)
         model.Add(sum(indicadores) <= tamano_mesa)
+
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 10.0
+    solver.parameters.max_time_in_seconds = 5.0
     status = solver.Solve(model)
+
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-        return crear_evento(nombre_evento, fecha, ubicacion, []), {}
+        mesas = [crear_mesa(i + 1, tamano_mesa, f"Mesa {i+1}") for i in range(num_mesas)]
+        idx = 0
+        for inv in participantes:
+            mesa_id = idx // tamano_mesa
+            mesas[mesa_id].invitados[idx % tamano_mesa] = inv
+            idx += 1
+        evento = crear_evento(nombre_evento, fecha, ubicacion, mesas)
+        return evento, {}
+
     mapping = {nom: solver.Value(mesa_var[nom]) for nom in nombres}
+
     mesas = [crear_mesa(i + 1, tamano_mesa, f"Mesa {i+1}") for i in range(num_mesas)]
     colocados = [0] * num_mesas
+
     for inv in participantes:
-        m_idx = mapping.get(inv.nombre, 0)
+        m_idx = mapping[inv.nombre]
         pos = colocados[m_idx]
-        if pos < tamano_mesa:
-            mesas[m_idx].invitados[pos] = inv
-            colocados[m_idx] += 1
+        mesas[m_idx].invitados[pos] = inv
+        colocados[m_idx] += 1
+
     evento = crear_evento(nombre_evento, fecha, ubicacion, mesas)
     return evento, mapping
 
@@ -245,6 +322,18 @@ class Main(QtWidgets.QMainWindow, ui_mesa.Ui_MainWindow):
                 if inv and (inv.nombre or "").strip():
                     self.inv_por_nombre[inv.nombre] = inv
 
+        assigned_names = set()
+        for mesa in self.evento.mesas:
+            for inv in mesa.invitados:
+                if inv and (inv.nombre or "").strip():
+                    assigned_names.add(inv.nombre.strip())
+
+        if assigned_names:
+            self.pool = [
+                g for g in self.pool
+                if (g.get("nombre") or "").strip() not in assigned_names
+            ]
+
         self._kill_arena_layout_once()
         parent = self.tblInvitados.parent()
         layout = parent.layout()
@@ -293,8 +382,12 @@ class Main(QtWidgets.QMainWindow, ui_mesa.Ui_MainWindow):
         self.tblMesas.setRowCount(len(self.evento.mesas))
         for r, mesa in enumerate(self.evento.mesas):
             nombre_mesa = mesa.nombMesa or f"Mesa {mesa.mesa_id}"
+            ocupados = sum(
+                1 for inv in mesa.invitados
+                if inv and (inv.nombre or "").strip()
+            )
             self.tblMesas.setItem(r, 0, QtWidgets.QTableWidgetItem(nombre_mesa))
-            self.tblMesas.setItem(r, 1, QtWidgets.QTableWidgetItem(str(mesa.numAsientos)))
+            self.tblMesas.setItem(r, 1, QtWidgets.QTableWidgetItem(f"{ocupados}/{mesa.numAsientos}"))
         if self.evento.mesas:
             self.tblMesas.selectRow(self.current_mesa_idx)
 
@@ -425,6 +518,7 @@ class Main(QtWidgets.QMainWindow, ui_mesa.Ui_MainWindow):
         mesa.invitados = invitados
         self._reload_pool_table()
         self._render_seats()
+        self._reload_tbl_mesas()
 
     def _anadir_demo(self):
         idxs = self.tblInvitados.selectionModel().selectedRows()
@@ -445,6 +539,7 @@ class Main(QtWidgets.QMainWindow, ui_mesa.Ui_MainWindow):
         mesa.invitados[idx_libre] = inv_obj
         self._remove_guest_from_pool_by_name(nombre)
         self._render_seats()
+        self._reload_tbl_mesas()
 
     def _eliminar_demo(self):
         mesa = self.evento.mesas[self.current_mesa_idx]
@@ -456,14 +551,64 @@ class Main(QtWidgets.QMainWindow, ui_mesa.Ui_MainWindow):
                 self._reload_pool_table()
                 break
         self._render_seats()
+        self._reload_tbl_mesas()
 
     def _confirmar_demo(self):
         mesa = self.evento.mesas[self.current_mesa_idx]
-        ocupados = [inv for inv in mesa.invitados if inv and (inv.nombre or "").strip()]
+        ocupados = [
+            inv for inv in mesa.invitados
+            if inv and (inv.nombre or "").strip()
+        ]
+
         QtWidgets.QMessageBox.information(
-            self, "Confirmado",
-            f"{mesa.nombMesa or 'Mesa ' + str(mesa.mesa_id)}: {len(ocupados)} / {mesa.numAsientos} ocupados."
+            self,
+            "Confirmado",
+            f"{mesa.nombMesa or 'Mesa ' + str(mesa.mesa_id)}: "
+            f"{len(ocupados)} / {mesa.numAsientos} ocupados."
         )
+
+        nombre_base = (self.evento.nombre or "evento").strip() or "evento"
+        safe = nombre_base.replace(" ", "_")
+        ruta = os.path.abspath(f"mesas_{safe}.csv")
+
+        try:
+            with open(ruta, "w", newline="", encoding="utf-8-sig") as f:
+                writer = csv.writer(f, delimiter=";")
+                writer.writerow(["mesa_id", "mesa_nombre", "asiento", "nombre", "apellido", "rol"])
+                for mesa in self.evento.mesas:
+                    mesa_nombre = mesa.nombMesa or f"Mesa {mesa.mesa_id}"
+                    for idx, inv in enumerate(mesa.invitados, start=1):
+                        if inv and (inv.nombre or inv.apellido):
+                            writer.writerow([
+                                mesa.mesa_id,
+                                mesa_nombre,
+                                idx,
+                                inv.nombre,
+                                inv.apellido,
+                                inv.rol
+                            ])
+                        else:
+                            writer.writerow([
+                                mesa.mesa_id,
+                                mesa_nombre,
+                                idx,
+                                "",
+                                "",
+                                ""
+                            ])
+
+            QtWidgets.QMessageBox.information(
+                self,
+                "Exportado",
+                f"Mesas exportadas correctamente en:\n{ruta}"
+            )
+
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self,
+                "Error",
+                f"No se pudo guardar el CSV:\n{e}"
+            )
 
 
 if __name__ == "__main__":

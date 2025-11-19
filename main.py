@@ -24,10 +24,9 @@ def cargar_eventos():
 
 
 class AppShim:
-    """Router simple que gestiona las ventanas."""
     def __init__(self):
         self.eventos = cargar_eventos()
-        self._ventanas = []  # Mantiene vivas las ventanas secundarias
+        self._ventanas = []  
 
     # ---- Guardar eventos ----
     def guardar_eventos(self):
@@ -48,7 +47,7 @@ class AppShim:
             win.setWindowTitle(nombre)
 
         win.show()
-        self._ventanas.append(win)  # evitar destrucción
+        self._ventanas.append(win)
 
     def dialog_anadir_evento(self):
         pass

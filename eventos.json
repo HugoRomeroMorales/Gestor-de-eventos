@@ -1,11 +1,11 @@
 [
   {
-    "tipo": "Boda de Carlos y Pepe",
-    "fecha": "13/11/2025",
-    "hora": "10:23",
+    "tipo": "Boda de Juan",
+    "fecha": "19/11/2025",
+    "hora": "19:05",
     "ubicacion": "Murcia",
-    "organizadores": "Hugo",
-    "mesas": 12,
-    "csv_invitados": "C:\\Gestor-de-eventos\\invitados_boda_de_carlos_y_pepe.csv"
+    "organizadores": "Los 3 Mosqueterros",
+    "mesas": 7,
+    "csv_invitados": "C:\\Users\\aladr\\OneDrive - MSFT\\Escritorio\\Clases\\Desarrollo de interfaces\\Gestor-de-eventos\\invitados_boda_de_juan.csv"
   }
 ]
